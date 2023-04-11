@@ -18,17 +18,17 @@ class Conversation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\OneToOne(inversedBy: 'conversation', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user = null;
+    private ?user $user;
 
     #[ORM\Column(length: 150)]
-    private ?string $subject = null;
+    private ?string $subject;
 
     #[ORM\OneToOne(mappedBy: 'conversation', cascade: ['persist', 'remove'])]
-    private ?Message $message = null;
+    private ?Message $message;
 
     public function getId(): ?int
     {

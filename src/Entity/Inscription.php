@@ -18,15 +18,15 @@ class Inscription
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\OneToOne(inversedBy: 'inscription', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user = null;
+    private ?user $user;
 
     #[ORM\OneToOne(inversedBy: 'inscription', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?travel $travel = null;
+    private ?travel $travel;
 
     public function getId(): ?int
     {

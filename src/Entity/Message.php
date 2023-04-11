@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Trait\Timestamps;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
@@ -18,18 +19,18 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user = null;
+    private ?user $user;
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?conversation $conversation = null;
+    private ?conversation $conversation;
 
-    #[ORM\Column(length: 255)]
-    private ?string $message = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $message;
 
     public function getId(): ?int
     {
@@ -71,4 +72,5 @@ class Message
 
         return $this;
     }
+
 }
