@@ -2,31 +2,37 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\ReportRepository;
+use Doctrine\DBAL\Types\Types;
+use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReportRepository;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Report
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\OneToOne(inversedBy: 'report', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user = null;
+    private ?user $user;
 
     #[ORM\Column]
-    private ?int $id_reportable = null;
+    private ?int $id_reportable;
 
     #[ORM\Column(length: 250)]
-    private ?string $type_reportable = null;
+    private ?string $type_reportable;
 
-    #[ORM\Column(length: 250)]
-    private ?string $message = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $message;
 
     public function getId(): ?int
     {

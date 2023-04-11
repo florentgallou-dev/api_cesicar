@@ -2,44 +2,49 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\Timestamps;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\TravelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Travel
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(length: 250)]
-    private ?string $name = null;
+    private ?string $name;
 
     #[ORM\Column(length: 150)]
-    private ?string $start_point = null;
+    private ?string $start_point;
 
     #[ORM\Column(length: 150)]
-    private ?string $end_point = null;
+    private ?string $end_point;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $start_datetime = null;
+    private ?\DateTimeInterface $start_datetime;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $end_datetime = null;
+    private ?\DateTimeInterface $end_datetime;
 
     #[ORM\Column]
-    private ?int $number_seats = null;
+    private ?int $number_seats;
 
     #[ORM\OneToOne(mappedBy: 'travel', cascade: ['persist', 'remove'])]
     private ?Inscription $inscription = null;
 
     #[ORM\OneToOne(inversedBy: 'travel', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user = null;
+    private ?user $user;
 
     public function getId(): ?int
     {

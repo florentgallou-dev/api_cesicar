@@ -2,28 +2,33 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\Timestamps;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ConversationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Conversation
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\OneToOne(inversedBy: 'conversation', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user = null;
+    private ?user $user;
 
     #[ORM\Column(length: 150)]
-    private ?string $subject = null;
+    private ?string $subject;
 
     #[ORM\OneToOne(mappedBy: 'conversation', cascade: ['persist', 'remove'])]
-    private ?Message $message = null;
+    private ?Message $message;
 
     public function getId(): ?int
     {

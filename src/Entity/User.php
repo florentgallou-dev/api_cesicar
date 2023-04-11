@@ -2,56 +2,65 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
+
+    #[ORM\Column(length: 150)]
+    private ?string $first_name;
+
+    #[ORM\Column(length: 150)]
+    private ?string $last_name;
+
+    #[ORM\Column(length: 5)]
+    private ?string $gender;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
-
-    #[ORM\Column]
-    private array $roles = [];
+    private ?string $email;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    private ?string $password;
 
     #[ORM\Column(length: 150)]
-    private ?string $first_name = null;
-
-    #[ORM\Column(length: 150)]
-    private ?string $last_name = null;
-
-    #[ORM\Column(length: 5)]
-    private ?string $gender = null;
-
-    #[ORM\Column(length: 150)]
-    private ?string $city = null;
+    private ?string $city;
 
     #[ORM\Column]
-    private ?bool $driver = null;
+    private array $roles = [];
 
-    #[ORM\Column(length: 150)]
-    private ?string $car_type;
+    #[ORM\Column]
+    private ?bool $driver;
 
-    #[ORM\Column(length: 15)]
-    private ?string $car_registration;
+    #[ORM\Column(length: 150, nullable: true)]
+    private ?string $car_type = null;
 
-    #[ORM\Column(length: 15)]
-    private ?string $car_nb_place;
+    #[ORM\Column(length: 15, nullable: true)]
+    private ?string $car_registration = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $car_nb_places = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $deleted_at = null;
+
+    // Relationships
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Inscription $inscription = null;
 
@@ -67,74 +76,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Report $report = null;
 
+    // Getters/Setters
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     public function getFirstName(): ?string
@@ -173,6 +118,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
     public function getCity(): ?string
     {
         return $this->city;
@@ -181,6 +172,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCity(string $city): self
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
@@ -221,14 +231,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCarNbPlace(): ?string
+    public function getDeletedAt(): ?\DateTimeImmutable
     {
-        return $this->car_nb_place;
+        return $this->deleted_at;
     }
 
-    public function setCarNbPlace(string $car_nb_place): self
+    public function setDeletedAt(\DateTimeImmutable $deleted_at): self
     {
-        $this->car_nb_place = $car_nb_place;
+        $this->deleted_at = $deleted_at;
 
         return $this;
     }
@@ -317,4 +327,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getCarNbPlaces(): ?int
+    {
+        return $this->car_nb_places;
+    }
+
+    public function setCarNbPlaces(?int $car_nb_places): self
+    {
+        $this->car_nb_places = $car_nb_places;
+
+        return $this;
+    }
+
 }
