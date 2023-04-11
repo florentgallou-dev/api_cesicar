@@ -2,14 +2,19 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\Timestamps;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\InscriptionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InscriptionRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 #[ApiResource]
 class Inscription
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

@@ -2,14 +2,19 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\Timestamps;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Report
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

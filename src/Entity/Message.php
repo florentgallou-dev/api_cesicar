@@ -2,14 +2,19 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\Timestamps;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Message
 {
+
+    use Timestamps;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
