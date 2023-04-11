@@ -16,7 +16,7 @@ class Conversation
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'conversation', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?user $user = null;
 
     #[ORM\Column(length: 150)]

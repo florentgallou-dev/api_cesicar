@@ -16,11 +16,11 @@ class Message
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?user $user = null;
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?conversation $conversation = null;
 
     #[ORM\Column(length: 255)]

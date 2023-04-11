@@ -16,11 +16,11 @@ class Inscription
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'inscription', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?user $user = null;
 
     #[ORM\OneToOne(inversedBy: 'inscription', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?travel $travel = null;
 
     public function getId(): ?int

@@ -38,7 +38,7 @@ class Travel
     private ?Inscription $inscription = null;
 
     #[ORM\OneToOne(inversedBy: 'travel', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?user $user = null;
 
     public function getId(): ?int

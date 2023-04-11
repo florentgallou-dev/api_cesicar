@@ -16,7 +16,7 @@ class Report
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'report', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?user $user = null;
 
     #[ORM\Column]
