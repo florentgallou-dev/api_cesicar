@@ -22,7 +22,7 @@ class Conversation
 
     #[ORM\OneToOne(inversedBy: 'conversation', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user;
+    private ?User $user;
 
     #[ORM\Column(length: 150)]
     private ?string $subject;
