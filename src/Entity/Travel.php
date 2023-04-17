@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Entity\Trait\Timestamps;
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\TravelRepository;
 use Doctrine\DBAL\Types\Types;
+use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TravelRepository;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -34,7 +34,7 @@ class Travel
     private ?\DateTimeInterface $start_datetime;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $end_datetime;
+    private ?DateTimeInterface $end_datetime;
 
     #[ORM\Column]
     private ?int $number_seats;
@@ -44,7 +44,7 @@ class Travel
 
     #[ORM\OneToOne(inversedBy: 'travel', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user;
+    private ?User $user;
 
     public function getId(): ?int
     {
@@ -140,7 +140,7 @@ class Travel
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }

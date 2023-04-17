@@ -57,24 +57,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $car_nb_places = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $deleted_at = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $deleted_at = null;
 
     // Relationships
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Inscription $inscription = null;
+    // #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    // private ?Inscription $inscription = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Travel $travel = null;
+    // #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    // private ?Travel $travel = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Conversation $conversation = null;
+    // #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    // private ?Conversation $conversation = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Message $message = null;
+    // #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    // private ?Message $message = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Report $report = null;
+    // #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    // private ?Report $report = null;
+
+    public function __toString(): string
+    {
+        return $this->getFirstName().' '.$this->getLastName();
+    }
 
     // Getters/Setters
     public function getId(): ?int
@@ -190,6 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setRoles(array $roles): self
     {
+
         $this->roles = $roles;
 
         return $this;
@@ -214,6 +220,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setCarType(string $car_type): self
     {
+
         $this->car_type = $car_type;
 
         return $this;
@@ -233,13 +240,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getDeletedAt(): ?\DateTimeImmutable
     {
-        return $this->deleted_at;
+        return $this->deleted_at ? $this->deleted_at->format('Y-m-d H:i:s') :$this->deleted_at;
     }
 
-    public function setDeletedAt(\DateTimeImmutable $deleted_at): self
+    public function setDeletedAt(bool $deleted_at): self
     {
-        $this->deleted_at = $deleted_at;
-
+        if($deleted_at){
+            $date = new \DateTimeImmutable();
+            $this->deleted_at = $date;
+        } else {
+            $this->deleted_at = null;
+        }
+        
         return $this;
     }
 
@@ -250,6 +262,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setInscription(Inscription $inscription): self
     {
+        
         // set the owning side of the relation if necessary
         if ($inscription->getUser() !== $this) {
             $inscription->setUser($this);
@@ -267,6 +280,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setTravel(Travel $travel): self
     {
+        
         // set the owning side of the relation if necessary
         if ($travel->getUser() !== $this) {
             $travel->setUser($this);
@@ -284,6 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setConversation(Conversation $conversation): self
     {
+        
         // set the owning side of the relation if necessary
         if ($conversation->getUser() !== $this) {
             $conversation->setUser($this);
@@ -301,6 +316,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setMessage(Message $message): self
     {
+
         // set the owning side of the relation if necessary
         if ($message->getUser() !== $this) {
             $message->setUser($this);
@@ -318,6 +334,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setReport(Report $report): self
     {
+        
         // set the owning side of the relation if necessary
         if ($report->getUser() !== $this) {
             $report->setUser($this);
@@ -335,6 +352,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setCarNbPlaces(?int $car_nb_places): self
     {
+        
         $this->car_nb_places = $car_nb_places;
 
         return $this;

@@ -23,7 +23,7 @@ class Message
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user;
+    private ?User $user;
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
@@ -37,7 +37,7 @@ class Message
         return $this->id;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
