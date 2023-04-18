@@ -32,6 +32,11 @@ class Message
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message;
 
+    public function __toString(): string
+    {
+        return $this->getUser().' : '.$this->getMessage();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

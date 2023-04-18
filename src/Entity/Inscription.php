@@ -28,6 +28,11 @@ class Inscription
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?travel $travel;
 
+    public function __toString(): string
+    {
+        return $this->getUser();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

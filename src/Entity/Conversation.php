@@ -30,6 +30,11 @@ class Conversation
     #[ORM\OneToOne(mappedBy: 'conversation', cascade: ['persist', 'remove'])]
     private ?Message $message;
 
+    public function __toString(): string
+    {
+        return $this->getUser().' : '.$this->getSubject();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
