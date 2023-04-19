@@ -17,7 +17,28 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-
+            entry_point: App\Security\AuthenticationEntryPoint
+            access_denied_handler: App\Security\AccessDeniedHandler
+            http_basic:
+                realm: Secured Area
+            # access_token:
+            #     token_handler: App\Security\AccessTokenHandler
+            form_login:
+                        # "app_login" is the name of the route created previously
+                        enable_csrf: true
+                        login_path: app_login
+                        check_path: app_login
+            json_login:
+                # api_login is a route we will create below
+                check_path: api_login
+            
+            # configure the maximum login attempts
+            login_throttling:
+                max_attempts: 3          # per minute ...
+                # interval: '15 minutes' # ... or in a custom period
+            
+            logout:
+                path: app_logout
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -27,8 +48,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+    
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_ADMIN
 
 when@test:
     security:
