@@ -11,3 +11,6 @@ php bin/console doctrine:s:u --dump-sql
 
 ## Apply DB columns mdoifciations :
 php bin/console doctrine:s:u --force
+
+## Hash your first password
+php bin/console security:hash-password

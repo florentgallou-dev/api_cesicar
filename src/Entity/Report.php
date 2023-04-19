@@ -23,7 +23,7 @@ class Report
 
     #[ORM\OneToOne(inversedBy: 'report', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?user $user;
+    private ?User $user;
 
     #[ORM\Column]
     private ?int $id_reportable;
@@ -34,12 +34,17 @@ class Report
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message;
 
+    public function __toString(): string
+    {
+        return $this->getUser().' : '.$this->getTypeReportable();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
