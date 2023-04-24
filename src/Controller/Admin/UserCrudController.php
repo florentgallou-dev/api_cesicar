@@ -26,7 +26,7 @@ class UserCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Utilisateurs')
             ->setSearchFields(['first_name', 'last_name', 'email'])
             ->setDefaultSort(['created_at' => 'DESC'])
-            // ->setEntityPermission('ROLE_ADMINISTRATOR')
+            ->setEntityPermission('ROLE_ADMIN')
             ;
     }
 
