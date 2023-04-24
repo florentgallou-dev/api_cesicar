@@ -26,7 +26,7 @@ class UserCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Utilisateurs')
             ->setSearchFields(['first_name', 'last_name', 'email'])
             ->setDefaultSort(['created_at' => 'DESC'])
-            // ->setEntityPermission('ROLE_ADMINISTRATOR')
+            ->setEntityPermission('ROLE_ADMIN')
             ;
     }
 
@@ -36,7 +36,7 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new('first_name', 'Prénom');
         yield TextField::new('last_name', 'Nom');
 
-        yield ChoiceField::new('gender', 'Genre')->setChoices(fn () => [
+        yield ChoiceField::new('gender', 'Genre')->setChoices([
                                                         'Femme' => 'femme',
                                                         'Homme' => 'homme',
                                                         'Autre' => 'autre',
@@ -45,7 +45,17 @@ class UserCrudController extends AbstractCrudController
         yield EmailField::new('email', 'Email');
         yield TextField::new('password', 'Mot de passe')
                             ->hideOnIndex();
-
+        yield ChoiceField::new('roles', 'Role')->setChoices([
+                                                    'Administrateur'    => '["ROLE_ADMIN"]',
+                                                    'Editeur'           => '["ROLE_EDITOR"]',
+                                                    'Utilisateur'       => '["ROLE_USER"]',
+                                                    'auncun'            => '["ROLE_USER"]'
+                                                ]);
+        // yield ChoiceField::new('roles', 'Role')->setChoices([
+        //                                                 'User' => 'ROLE_USER',
+        //                                                 'Administrator' => 'ROLE_ADMIN',
+        //                                                 'Super Administrator' => 'ROLE_ADMIN'
+        //                                             ]);
         yield TextField::new('city', 'Ville');
 
         yield BooleanField::new('driver', 'Conducteur')->renderAsSwitch(true);
