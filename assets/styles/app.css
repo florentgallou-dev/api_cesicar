@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+    @apply text-3xl font-bold text-center text-black;
+}
+
+body {
+    @apply font-quicksand bg-gradient-to-tl from-grey-to to-grey-from;
+}
+
+.full-screen {
+    @apply  flex w-screen h-screen justify-center items-center;
+}
+.centered-container {
+    @apply flex flex-col items-center gap-10 h-fit;
+}
+
+.logo {
+    @apply h-auto w-64;
+}
+
+form {
+    @apply flex flex-col justify-center gap-5 bg-violet p-8 rounded-md;
+}
+.error {
+    @apply p-3 bg-red text-white items-center font-bold before:content-['☹'] before:mr-5 before:text-xl
+}
+.input-container {
+    @apply flex flex-col justify-center gap-1;
+}
+label {
+    @apply text-center text-white uppercase;
+}
+input {
+    @apply p-2;
+}
+button, [type='button'], [type='reset'], [type='submit'] {
+    @apply px-2 py-1 bg-black text-white transition-all duration-200 ease-in-out hover:scale-105 uppercase rounded-full;
+}
