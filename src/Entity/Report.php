@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
@@ -49,7 +50,7 @@ class Report
         return $this->user;
     }
 
-    public function setUser(user $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 

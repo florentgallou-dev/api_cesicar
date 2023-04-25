@@ -7,15 +7,29 @@ use App\Entity\Travel;
 use App\Entity\Message;
 use App\Entity\Inscription;
 use App\Entity\Conversation;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => 'read:item']),
+        new Patch(normalizationContext: ['groups' => 'read:item']),
+        new GetCollection(normalizationContext: ['groups' => 'read:list'])
+    ],
+    order: ['id' => 'ASC'],
+    paginationEnabled: false,
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use Timestamps;
@@ -23,9 +37,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(length: 150)]
+    #[Groups(['user:list', 'user:item'])]
     private ?string $first_name;
 
     #[ORM\Column(length: 150)]
@@ -35,53 +50,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $gender;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    private ?string $email;
     
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    private ?string $password;
 
     #[ORM\Column(type: 'json')]
-    private array $roles = [];
+    private ?array $roles = [];
 
-    #[ORM\Column(length: 150)]
-    private ?string $city;
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Groups(['user:list', 'user:item'])]
+    private ?array $position;
 
     #[ORM\Column]
     private ?bool $driver;
 
     #[ORM\Column(length: 150, nullable: true)]
-    private ?string $car_type = null;
+    private ?string $car_type;
 
     #[ORM\Column(length: 15, nullable: true)]
-    private ?string $car_registration = null;
+    private ?string $car_registration;
 
     #[ORM\Column(nullable: true)]
-    private ?int $car_nb_places = null;
+    private ?int $car_nb_places;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $deleted_at = null;
+    private ?\DateTime $deleted_at;
 
     // Relationships
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Inscription $inscription = null;
+    private ?Inscription $inscription;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Travel $travel = null;
+    private ?Travel $travel;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Conversation $conversation = null;
+    private ?Conversation $conversation;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Message $message = null;
+    private ?Message $message;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Report $report = null;
+    private ?Report $report;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private ?bool $isVerified;
 
     public function __toString(): string
     {
@@ -163,9 +179,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(string $roles): self
+    public function setRoles(array $roles): self
     {
-        $this->roles = json_decode( $roles);
+        $this->roles = $roles;
 
         return $this;
     }
@@ -194,14 +210,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getCity(): ?string
+    public function getPosition(): ?array
     {
-        return $this->city;
+        $position[] = $this->position;
+        return $this->position;
     }
 
-    public function setCity(string $city): self
+    public function setPosition(array $position): self
     {
-        $this->city = $city;
+        $this->position = $position;
 
         return $this;
     }
