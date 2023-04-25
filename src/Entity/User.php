@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -44,13 +45,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: 'json')]
-    private array $roles = [];
+    private ?array $roles = [];
 
-    #[ORM\Column(length: 150)]
-    private ?string $city;
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $city;
 
     #[ORM\Column]
-    private ?bool $driver;
+    private ?bool $driver = false;
 
     #[ORM\Column(length: 150, nullable: true)]
     private ?string $car_type = null;
@@ -81,7 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Report $report = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private ?bool $isVerified = false;
 
     public function __toString(): string
     {
@@ -194,12 +195,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getCity(): ?string
+    public function getCity(): ?array
     {
+        $city[] = $this->city;
         return $this->city;
     }
 
-    public function setCity(string $city): self
+    public function setCity(array $city): self
     {
         $this->city = $city;
 
