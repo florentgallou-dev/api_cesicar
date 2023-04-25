@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
+use App\Entity\Conversation;
+use Doctrine\DBAL\Types\Types;
 use App\Entity\Trait\Timestamps;
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -27,7 +29,7 @@ class Message
 
     #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?conversation $conversation;
+    private ?Conversation $conversation;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message;
@@ -47,19 +49,19 @@ class Message
         return $this->user;
     }
 
-    public function setUser(user $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getConversation(): ?conversation
+    public function getConversation(): ?Conversation
     {
         return $this->conversation;
     }
 
-    public function setConversation(conversation $conversation): self
+    public function setConversation(Conversation $conversation): self
     {
         $this->conversation = $conversation;
 

@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
+use App\Entity\Message;
 use App\Entity\Trait\Timestamps;
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ConversationRepository;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -45,7 +47,7 @@ class Conversation
         return $this->user;
     }
 
-    public function setUser(user $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 

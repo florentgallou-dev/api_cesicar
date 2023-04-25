@@ -85,7 +85,7 @@ class UserCrudController extends AbstractCrudController
                                                 ])
                                                 ->allowMultipleChoices();
                                                 
-        yield ArrayField::new('city', 'Ville');
+        yield ArrayField::new('position', 'Position');
 
         yield BooleanField::new('driver', 'Conducteur')->renderAsSwitch(true);
         yield TextField::new('car_type', 'Modèle')
@@ -95,11 +95,11 @@ class UserCrudController extends AbstractCrudController
         yield IntegerField::new('car_nb_places', 'Nombre de places')
                             ->hideOnIndex();
 
-        // yield AssociationField::new('inscription');
-        // yield AssociationField::new('travel');
-        // yield AssociationField::new('conversation');
-        // yield AssociationField::new('message');
-        // yield AssociationField::new('report');
+        yield AssociationField::new('inscription');
+        yield AssociationField::new('travel');
+        yield AssociationField::new('conversation');
+        yield AssociationField::new('message');
+        yield AssociationField::new('report');
 
     }
 

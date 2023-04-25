@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
+use App\Entity\Travel;
 use App\Entity\Trait\Timestamps;
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\InscriptionRepository;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InscriptionRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
@@ -26,7 +28,7 @@ class Inscription
 
     #[ORM\OneToOne(inversedBy: 'inscription', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?travel $travel;
+    private ?Travel $travel;
 
     public function __toString(): string
     {
@@ -43,19 +45,19 @@ class Inscription
         return $this->user;
     }
 
-    public function setUser(user $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getTravel(): ?travel
+    public function getTravel(): ?Travel
     {
         return $this->travel;
     }
 
-    public function setTravel(travel $travel): self
+    public function setTravel(Travel $travel): self
     {
         $this->travel = $travel;
 
