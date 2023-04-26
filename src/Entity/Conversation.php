@@ -6,15 +6,12 @@ use App\Entity\User;
 use App\Entity\Message;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ConversationRepository;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
 class Conversation
 {
-
     use Timestamps;
 
     #[ORM\Id]

@@ -6,12 +6,10 @@ use App\Entity\User;
 use App\Entity\Travel;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\InscriptionRepository;
 
 #[ORM\Entity(repositoryClass: InscriptionRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
-#[ApiResource]
 class Inscription
 {
 

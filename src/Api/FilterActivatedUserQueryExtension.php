@@ -14,14 +14,14 @@ class FilterActivatedUserQueryExtension implements QueryCollectionExtensionInter
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
     {
         if (User::class === $resourceClass) {
-            $queryBuilder->andWhere(sprintf("%s.deleted_at = null", $queryBuilder->getRootAliases()[0]));
+            $queryBuilder->andWhere(sprintf("%s.deleted_at IS NULL", $queryBuilder->getRootAliases()[0]));
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, Operation $operation = null, array $context = []): void
     {
         if (User::class === $resourceClass) {
-            $queryBuilder->andWhere(sprintf("%s.deleted_at = null", $queryBuilder->getRootAliases()[0]));
+            $queryBuilder->andWhere(sprintf("%s.deleted_at IS NULL", $queryBuilder->getRootAliases()[0]));
         }
     }
 }
