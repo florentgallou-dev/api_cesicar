@@ -7,12 +7,10 @@ use App\Entity\Conversation;
 use Doctrine\DBAL\Types\Types;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
 class Message
 {
 

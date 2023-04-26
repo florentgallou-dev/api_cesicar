@@ -13,7 +13,6 @@ use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -25,7 +24,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     operations: [
         new Get(normalizationContext: ['groups' => 'user:item']),
         new Patch(normalizationContext: ['groups' => 'user:item']),
-        new GetCollection(normalizationContext: ['groups' => 'user:list'])
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
@@ -37,11 +35,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['user:list', 'user:item', 'create:travel'])]
     private ?int $id;
 
     #[ORM\Column(length: 150)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['user:list', 'user:item', 'read:ontravels'])]
     private ?string $first_name;
 
     #[ORM\Column(length: 150)]
@@ -266,11 +264,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->deleted_at;
     }
 
-    public function setDeletedAt(bool $deleted_at)
+    public function setDeletedAt(bool $deleted_at): self
     {
         if ($deleted_at) {
             $this->deleted_at = new \DateTime();
         }
+        return $this;
     }
 
     public function getInscription(): ?Inscription
