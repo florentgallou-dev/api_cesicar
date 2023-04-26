@@ -23,9 +23,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => 'read:item']),
-        new Patch(normalizationContext: ['groups' => 'read:item']),
-        new GetCollection(normalizationContext: ['groups' => 'read:list'])
+        new Get(normalizationContext: ['groups' => 'user:item']),
+        new Patch(normalizationContext: ['groups' => 'user:item']),
+        new GetCollection(normalizationContext: ['groups' => 'user:list'])
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
@@ -37,6 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:list', 'user:item'])]
     private ?int $id;
 
     #[ORM\Column(length: 150)]
@@ -260,21 +261,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeImmutable
+    public function getDeletedAt(): ?\DateTime
     {
-        return $this->deleted_at ? $this->deleted_at->format('Y-m-d H:i:s') :$this->deleted_at;
+        return $this->deleted_at;
     }
 
-    public function setDeletedAt(bool $deleted_at): self
+    public function setDeletedAt(bool $deleted_at)
     {
-        if($deleted_at){
-            $date = new \DateTimeImmutable();
-            $this->deleted_at = $date;
-        } else {
-            $this->deleted_at = null;
+        if ($deleted_at) {
+            $this->deleted_at = new \DateTime();
         }
-        
-        return $this;
     }
 
     public function getInscription(): ?Inscription

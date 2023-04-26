@@ -24,12 +24,12 @@ trait Timestamps
         $this->updated_at = new \DateTime();
     }
 
-    public function getCreatedAt(): ?int
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->created_at;
     }
 
-    public function getUpdatedAt(): ?int
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updated_at;
     }
