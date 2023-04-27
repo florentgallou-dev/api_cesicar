@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id;
 
     #[ORM\Column(length: 150)]
-    #[Groups(['user:list', 'user:item', 'read:ontravels'])]
+    #[Groups(['user:list', 'user:item'])]
     private ?string $first_name;
 
     #[ORM\Column(length: 150)]
@@ -62,22 +62,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json', nullable: true)]
     #[Groups(['user:list', 'user:item'])]
-    private ?array $position;
+    private ?array $position = null;
 
-    #[ORM\Column]
-    private ?bool $driver;
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $driver = false;
 
     #[ORM\Column(length: 150, nullable: true)]
-    private ?string $car_type;
+    private ?string $car_type = null;
 
     #[ORM\Column(length: 15, nullable: true)]
-    private ?string $car_registration;
+    private ?string $car_registration = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $car_nb_places;
+    private ?int $car_nb_places = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $deleted_at;
+    private ?\DateTime $deleted_at = null;
 
     // Relationships
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
@@ -96,7 +96,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Report $report;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isVerified;
+    private ?bool $isVerified = false;
 
     public function __toString(): string
     {
@@ -106,6 +106,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    #[Groups(['read:travels'])]
+    public function getName(): ?string
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function getFirstName(): ?string
