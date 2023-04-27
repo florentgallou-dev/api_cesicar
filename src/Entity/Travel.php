@@ -21,15 +21,33 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
+    shortName: 'Travel',
     operations: [
-        new GetCollection(normalizationContext: ['groups' => 'read:ontravels']),
-        new Get(normalizationContext: ['groups' => 'read:travel']),
-        new Post(normalizationContext: ['groups' => 'create:travel']),
-        new Patch(normalizationContext: ['groups' => 'update:travel']),
-        new Delete(normalizationContext: ['groups' => 'delete:travel']),
+        new GetCollection(
+            uriTemplate: '/travels',
+            description: 'Retrieves the collection of Travels',
+            normalizationContext: ['groups' => 'read:travels']
+        ),
+        new Get(
+            uriTemplate: '/travel/{id}',
+            normalizationContext: ['groups' => 'read:travel']
+        ),
+        new Post(
+            uriTemplate: '/travel',
+            normalizationContext: ['groups' => 'create:travel']
+        ),
+        new Patch(
+            uriTemplate: '/travel/{id}',
+            normalizationContext: ['groups' => 'update:travel']
+        ),
+        new Delete(
+            uriTemplate: '/travel/{id}',
+            normalizationContext: ['groups' => 'delete:travel']
+        ),
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
+    description: 'Resources des trajets proposés par nos conducteurs'
 )]
 // #[ApiFilter(
 //     SearchFilter::class,
@@ -44,28 +62,35 @@ class Travel
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:ontravels', 'read:travel'])]
+    #[Groups(['read:travels', 'read:travel'])]
     private ?int $id;
 
     #[ORM\Column(length: 250)]
     #[Groups(['create:travel', 'update:travel'])]
     private ?string $name;
 
+    /**
+    *   toCesi field is used to tel if travel is to go to CESI or not
+    **/
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    private ?bool $toCesi = false;
+
+    /**
+    *   Position field : 
+    *   if toCesi = false -> position = back_direction from CESI,
+    *   if toCesi = true  -> position = start_position to CESI
+    **/
     #[ORM\Column(type: 'json', nullable: true)]
-    #[Groups(['read:ontravels', 'read:travel', 'create:travel', 'update:travel'])]
-    private ?array $start_point;
+    #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    private ?array $position;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    #[Groups(['read:travel', 'create:travel', 'update:travel'])]
-    private ?array $end_point;
-
+    /**
+    *   Datetime telling when travel starts, use it with travel information to calculate traveltime
+    **/
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['read:travel', 'create:travel', 'update:travel'])]
-    private ?\DateTime $start_datetime;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['read:travel', 'create:travel', 'update:travel'])]
-    private ?\DateTime $end_datetime;
+    #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    private ?\DateTime $departure_date;
 
     #[ORM\Column]
     #[Groups(['read:travel', 'create:travel', 'update:travel'])]
@@ -77,12 +102,17 @@ class Travel
 
     #[ORM\OneToOne(inversedBy: 'travel', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    #[Groups(['read:ontravels', 'read:travel', 'create:travel'])]
+    #[Groups(['read:travels', 'read:travel', 'create:travel'])]
     private ?User $user;
 
     public function __toString(): string
     {
-        return $this->getName().' : '.$this->getStartPoint().' vers '.$this->getEndPoint();
+        if($this->isToCesi()){
+            return $this->getName().' : '.$this->getPosition().' vers CESI';
+        }else{
+            return $this->getName().' : CESI vers '.$this->getPosition();
+        }
+        
     }
 
     public function getId(): ?int
@@ -102,52 +132,39 @@ class Travel
         return $this;
     }
 
-    public function getStartPoint(): ?array
+    public function isToCesi(): bool
     {
-        $start_point[] = $this->start_point;
-        return $this->start_point;
+        return $this->toCesi;
     }
 
-    public function setStartPoint(array $start_point): self
+    public function setToCesi(bool $toCesi): self
     {
-        $this->start_point = $start_point;
+        $this->toCesi = $toCesi;
 
         return $this;
     }
 
-    public function getEndPoint(): ?array
+    public function getPosition(): ?array
     {
-        $end_point[] = $this->end_point;
-        return $this->end_point;
+        $position[] = $this->position;
+        return $this->position;
     }
 
-    public function setEndPoint(array $end_point): self
+    public function setPosition(array $position): self
     {
-        $this->end_point = $end_point;
+        $this->position = $position;
 
         return $this;
     }
 
-    public function getStartDatetime(): ?\DateTime
+    public function getDepartureDate(): ?\DateTime
     {
-        return $this->start_datetime;
+        return $this->departure_date;
     }
 
-    public function setStartDatetime(\DateTime $start_datetime): self
+    public function setDepartureDate(\DateTime $departure_date): self
     {
-        $this->start_datetime = $start_datetime;
-
-        return $this;
-    }
-
-    public function getEndDatetime(): ?\DateTime
-    {
-        return $this->end_datetime;
-    }
-
-    public function setEndDatetime(\DateTime $end_datetime): self
-    {
-        $this->end_datetime = $end_datetime;
+        $this->departure_date = $departure_date;
 
         return $this;
     }
