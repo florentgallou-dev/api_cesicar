@@ -8,12 +8,14 @@ use App\Entity\Message;
 use App\Entity\Inscription;
 use App\Entity\Conversation;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -24,6 +26,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     operations: [
         new Get(normalizationContext: ['groups' => 'user:item']),
         new Patch(normalizationContext: ['groups' => 'user:item']),
+        new Post(
+            uriTemplate: '/user',
+            normalizationContext: ['groups' => 'create:user']
+        ),
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
@@ -39,25 +45,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: "Votre prénom est nécessaire à votre enregistrement.")]
+    #[Assert\Length(
+            min: 3, max: 50,
+            minMessage: 'Votre prénom doit comporter au minimum 3 caractères.',
+            maxMessage: 'Votre prénom ne peux dépasser 50 caractères.'
+    )]
     #[Groups(['user:list', 'user:item'])]
     private ?string $first_name;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: "Votre nom est nécessaire à votre enregistrement.")]
+    #[Assert\Length(
+            min: 3,
+            max: 50,
+            minMessage: 'Votre nom doit comporter au minimum 3 caractères.',
+            maxMessage: 'Votre nom ne peux dépasser 50 caractères.'
+    )]
     private ?string $last_name;
 
     #[ORM\Column(length: 5)]
+    #[Assert\NotBlank(message: "Votre genre est nécessaire à votre enregistrement.")]
+    #[Assert\Choice(callback: 'getGenders')]
     private ?string $gender;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "Votre email est indispensable pour vous identifier.")]
     private ?string $email;
     
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Votre mot de passe est indispensable pour vous identifier.")]
     private ?string $password;
 
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: 'json', nullable: true)]
     private ?array $roles = [];
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -68,12 +91,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $driver = false;
 
     #[ORM\Column(length: 150, nullable: true)]
+    #[Assert\When(
+        expression: 'this.getDriver() == true',
+        constraints: [
+            new Assert\NotBlank(message: "Le type de votre véhicule est nécessaire si vous êtres un conducteur.")
+        ],
+    )]
     private ?string $car_type = null;
 
     #[ORM\Column(length: 15, nullable: true)]
+    #[Assert\When(
+        expression: 'this.getDriver() == true',
+        constraints: [
+            new Assert\NotBlank(message: "Votre plaque d'imatriculation est nécessaire si vous êtres un conducteur.")
+        ],
+    )]
     private ?string $car_registration = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\When(
+        expression: 'this.getDriver() == true',
+        constraints: [
+            new Assert\NotBlank(message: "Le nombre de places disponible dans votre véhicule est nécessaire si vous êtres un conducteur.")
+        ],
+    )]
     private ?int $car_nb_places = null;
 
     #[ORM\Column(nullable: true)]
@@ -138,6 +179,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public static function getGenders()
+    {
+        return ['homme', 'femme', 'autre'];
+    }
+
     public function getGender(): ?string
     {
         return $this->gender;
@@ -184,7 +230,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(?array $roles): self
     {
         $this->roles = $roles;
 
@@ -228,7 +274,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isDriver(): ?bool
+    public function getDriver(): ?bool
     {
         return $this->driver;
     }
@@ -245,7 +291,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->car_type;
     }
 
-    public function setCarType(string $car_type): self
+    public function setCarType(?string $car_type): self
     {
 
         $this->car_type = $car_type;
@@ -258,7 +304,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->car_registration;
     }
 
-    public function setCarRegistration(string $car_registration): self
+    public function setCarRegistration(?string $car_registration): self
     {
         $this->car_registration = $car_registration;
 
