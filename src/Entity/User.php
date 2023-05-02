@@ -120,6 +120,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTime $deleted_at = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isVerified = false;
+
     // Relationships
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Inscription $inscription;
@@ -135,9 +138,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Report $report;
-
-    #[ORM\Column(type: 'boolean')]
-    private ?bool $isVerified = false;
 
     public function __toString(): string
     {

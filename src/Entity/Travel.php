@@ -88,7 +88,7 @@ class Travel
     /**
     *   Datetime telling when travel starts, use it with travel information to calculate traveltime
     **/
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column]
     #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
     private ?\DateTime $departure_date;
 
@@ -108,9 +108,9 @@ class Travel
     public function __toString(): string
     {
         if($this->isToCesi()){
-            return $this->getName().' : '.$this->getPosition().' vers CESI';
+            return $this->getName().' : '.json_encode($this->getPosition()).' vers CESI';
         }else{
-            return $this->getName().' : CESI vers '.$this->getPosition();
+            return $this->getName().' : CESI vers '.json_encode($this->getPosition());
         }
         
     }

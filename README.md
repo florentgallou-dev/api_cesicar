@@ -34,7 +34,7 @@ php bin/console doctrine:s:u --dump-sql
 php bin/console doctrine:s:u --force
 ```
 
-## 5/ Create first admin user
+## Optional/ Create first admin user
 in database, add first row in user :
 - first_name
 - last_name
@@ -45,26 +45,37 @@ in database, add first row in user :
 - driver -> 0 or 1
 - is_verified -> 0 or 1
 - created_at and updated_at -> set now value
-## Hash your first password
+## Optional/Hash your first password
 ```bash
 php bin/console security:hash-password
+```
+## 5 Start API / BackOffice
+```bash
+symfony server:start
+```
+## 6 Run fixtures to furnish the databases with starting datas
+```bash
+symfony doctrine:fixtures:load
 ```
 
 # ROUTES
 
 ## Access BackOffice
-/admin
+127.0.0.1:8000/admin
+connect with your credentials or this admin :
+login : florent.gallou@viacesi.fr
+password : password
 
 ## Access api
-/api
+127.0.0.1:8000/api
 -> help : https://symfonycasts.com/screencast/api-platform/json-ld
 
 ## Access api using helper
-/_profiler
+127.0.0.1:8000/_profiler
 -> help : https://symfonycasts.com/screencast/api-platform/profiler
 
 ### Api get all Travels
-/api/travels
+127.0.0.1:8000/api/travels
 ```bash
 
 [
