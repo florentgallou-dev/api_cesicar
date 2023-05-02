@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -44,17 +45,14 @@ class TravelCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         
+        yield AssociationField::new('user', 'Conducteur');
+
         yield TextField::new('name', 'Nom du voyage');
-
-        yield ArrayField::new('start_point', 'Départ');
-        yield ArrayField::new('end_point', 'Arrivée');
-
-        yield DateField::new('start_datetime', 'Date de départ');
-        yield DateField::new('end_datetime', 'Date d\'arrivée');
-
-        yield NumberField::new('number_seats', 'Nombre disponibles');
+        yield BooleanField::new('to_cesi', 'Voyage en direction de CESI')->renderAsSwitch(true);
+        yield ArrayField::new('position', 'Arrivée');
+        yield DateField::new('departure_date', 'Date de départ');
+        yield NumberField::new('number_seats', 'Places disponibles');
 
         yield AssociationField::new('inscription');
-        yield AssociationField::new('user');
     }
 }

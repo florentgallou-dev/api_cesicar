@@ -16,7 +16,6 @@ trait Timestamps
         $this->setCreatedAt();
     }
 
-    // #[ORM\PrePersist]
     public function setCreatedAt()
     {
         $this->created_at = new \DateTime();
@@ -28,7 +27,6 @@ trait Timestamps
         return $this->created_at;
     }
 
-    // #[ORM\PreUpdate]
     public function setUpdatedAt()
     {
         $this->updated_at = new \DateTime();
