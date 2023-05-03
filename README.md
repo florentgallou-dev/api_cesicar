@@ -55,16 +55,21 @@ symfony server:start
 ```
 ## 6 Run fixtures to furnish the databases with starting datas
 ```bash
-symfony doctrine:fixtures:load
+php bin/console doctrine:fixtures:load
 ```
+
+## Project Helpers
+<details>
+<summary>Routes</summary>
 
 # ROUTES
 
 ## Access BackOffice
 127.0.0.1:8000/admin
+
 connect with your credentials or this admin :
-login : florent.gallou@viacesi.fr
-password : password
+  login : florent.gallou@viacesi.fr
+  password : password
 
 ## Access api
 127.0.0.1:8000/api
@@ -104,3 +109,15 @@ password : password
   - to know travel length, calculate time with Km between CESI and position
 
 - user.name = first_name.' '.last_name (of driver)
+
+</details>
+
+<details>
+<summary>API LOGIN</summary>
+
+## API LOGIN
+127.0.0.1/login -> method post
+help -> https://symfonycasts.com/screencast/api-platform-security/data-page-load#play
+
+
+</details>

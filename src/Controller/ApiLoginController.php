@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ApiLoginController extends AbstractController
 {
-    #[Route('/api/login', name: 'app_api_login')]
+    #[Route('/api/login', name: 'app_api_login', methods: ['POST'])]
     public function index(#[CurrentUser] ?User $user): JsonResponse
     {
         if (null === $user) {
@@ -23,6 +23,7 @@ class ApiLoginController extends AbstractController
 
         return $this->json([
             'user'  => $user->getUserIdentifier(),
+            'roles'     => $user->getRoles(),
             'token' => $token,
         ]);
     }
