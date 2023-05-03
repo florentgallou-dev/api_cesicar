@@ -31,9 +31,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
                 normalizationContext: ['groups' => 'read:user'],
                 paginationEnabled: false,
                 read: true,
-                output: false,
-                openapiContext: ['cookiesAuth' => []]
-                // security: 'is_granted("ROLE_USER")'
+                openapiContext: ['cookiesAuth' => []],
+                security: 'is_granted("ROLE_USER")'
         ),
         new Patch(normalizationContext: ['groups' => 'update:user']),
         // new Post(
