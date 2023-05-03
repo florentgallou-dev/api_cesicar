@@ -36,6 +36,11 @@ class Report
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?User $user = null;
 
+    public function __construct()
+    {
+        $this->setCreatedAt();
+    }
+
     public function __toString(): string
     {
         return $this->getUser().' : '.$this->getTypeReportable();

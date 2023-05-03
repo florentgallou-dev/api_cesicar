@@ -47,11 +47,9 @@ final class ReportFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'created_at' => self::faker()->dateTime(),
             'id_reportable' => self::faker()->randomNumber(),
-            'message' => self::faker()->text(),
             'type_reportable' => self::faker()->text(250),
-            'updated_at' => self::faker()->dateTime(),
+            'message' => self::faker()->text(),
             'user' => UserFactory::new(),
         ];
     }

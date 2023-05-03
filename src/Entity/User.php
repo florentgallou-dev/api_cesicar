@@ -5,14 +5,12 @@ namespace App\Entity;
 use App\Entity\Report;
 use App\Entity\Travel;
 use App\Entity\Message;
-use App\Entity\Inscription;
 use App\Entity\Conversation;
 use ApiPlatform\Metadata\Patch;
 use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping\JoinTable;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
@@ -160,6 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->setCreatedAt();
         $this->travels = new ArrayCollection();
         $this->inscriptions = new ArrayCollection();
         $this->conversations = new ArrayCollection();

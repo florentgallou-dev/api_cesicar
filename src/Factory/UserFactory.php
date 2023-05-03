@@ -48,19 +48,6 @@ final class UserFactory extends ModelFactory
      */
     protected function getDefaults(): array
     {
-        $geolocalisations = [
-            [49.398727, 1.066153],
-            [49.413940, 1.144741],
-            [49.420202, 1.090068],
-            [49.479810, 1.039546],
-            [49.498714, 1.146148],
-            [49.544962, 1.051310],
-            [49.356619, 1.006793],
-            [49.339513, 1.095627],
-            [49.297965, 1.015903],
-            [49.260965, 0.932748],
-        ];
-
         $faker = Faker\Factory::create('fr_FR');
         $driver = $faker->boolean();
         if($driver){
@@ -69,12 +56,11 @@ final class UserFactory extends ModelFactory
             $car_nb_places = $faker->randomElement($array = [1, 2, 3, 4, 5, 6]);
         }
 
-
         return [
             'first_name' => $faker->firstName,
             'last_name' => $faker->lastName,
             'email' => $faker->email,
-            'position' => $faker->randomElement($geolocalisations),
+            'position' => [$faker->latitude(49.324733, 49.496122), $faker->longitude(0.982762, 1.295804)],
             'password' => 'password',
             'gender' => $faker->randomElement($array = ['homme', 'femme', 'autre']),
             'isVerified' => $faker->boolean(),

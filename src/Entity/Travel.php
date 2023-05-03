@@ -110,6 +110,7 @@ class Travel
 
     public function __construct()
     {
+        $this->setCreatedAt();
         $this->voyagers = new ArrayCollection();
     }
 

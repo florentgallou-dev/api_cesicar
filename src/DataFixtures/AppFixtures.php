@@ -26,7 +26,7 @@ class AppFixtures extends Fixture
             $manager->persist($user1);
             $manager->flush();
 
-        // UserFactory::createMany(10);
-        // TravelFactory::createMany(10);
+        UserFactory::createMany(10);
+        TravelFactory::createMany(10);
     }
 }

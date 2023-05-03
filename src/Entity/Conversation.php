@@ -34,6 +34,7 @@ class Conversation
 
     public function __construct()
     {
+        $this->setCreatedAt();
         $this->messages = new ArrayCollection();
     }
 

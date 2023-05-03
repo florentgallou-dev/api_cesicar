@@ -33,6 +33,11 @@ class Message
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?Conversation $conversation = null;
 
+    public function __construct()
+    {
+        $this->setCreatedAt();
+    }
+
     public function __toString(): string
     {
         return $this->getUser().' : '.$this->getMessage();

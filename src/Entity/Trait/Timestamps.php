@@ -11,17 +11,11 @@ trait Timestamps
     #[ORM\Column]
     private ?\DateTime $updated_at;
 
-    public function __construct()
-    {
-        $this->setCreatedAt();
-    }
-
     public function setCreatedAt()
     {
         $this->created_at = new \DateTime();
         $this->updated_at = new \DateTime();
     }
-
     public function getCreatedAt(): ?\DateTime
     {
         return $this->created_at;
@@ -31,7 +25,6 @@ trait Timestamps
     {
         $this->updated_at = new \DateTime();
     }
-
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updated_at;
