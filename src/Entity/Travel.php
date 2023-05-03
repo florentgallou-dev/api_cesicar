@@ -102,10 +102,12 @@ class Travel
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
+    #[Groups(['read:travels', 'read:travel'])]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
     #[JoinTable(name: 'travels_voyagers')]
+    #[Groups(['read:travel'])]
     private Collection $voyagers;
 
     public function __construct()

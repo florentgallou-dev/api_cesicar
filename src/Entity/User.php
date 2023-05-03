@@ -170,7 +170,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->getFirstName().' '.$this->getLastName();
     }
-    #[Groups(['read:travels'])]
+
+    #[Groups(['read:travels', 'read:travel'])]
     public function getName(): ?string
     {
         return $this->first_name.' '.$this->last_name;

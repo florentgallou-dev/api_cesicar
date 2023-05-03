@@ -11,7 +11,6 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
 class Report
 {
 
