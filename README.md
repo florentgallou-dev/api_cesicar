@@ -29,8 +29,10 @@ npm install
 
 ## 4/ Create .env
 ```bash
-Create file .env.local il your root folder
+Create file .env.local in your root folder
+```
 Add this line with your DB parametes : 
+```bash
 DATABASE_URL="mysql://login:password@127.0.0.1:3306/databasename?serverVersion=yourmysqlversion"
 ```
 
@@ -48,9 +50,15 @@ php bin/console doctrine:s:u --force
 ```bash
 php bin/console doctrine:fixtures:load
 ```
+
 ## 8/ Start API / BackOffice
 ```bash
 symfony server:start
+```
+
+## 9/ Generate JWT keys
+```bash
+php bin/console lexik:jwt:generate-keypair
 ```
 
 ## Optional/ Create first admin user
@@ -86,6 +94,11 @@ composer install && npm install
 Also you may want to check if migrations have to be done
 ```bash
 php bin/console doctrine:s:u --dump-sql
+```
+
+Dont forget to generate your JWT Keys
+```bash
+php bin/console lexik:jwt:generate-keypair
 ```
 </details>
 

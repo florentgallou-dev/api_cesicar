@@ -47,10 +47,8 @@ final class ConversationFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'created_at' => self::faker()->dateTime(),
-            'subject' => self::faker()->text(150),
-            'updated_at' => self::faker()->dateTime(),
             'user' => UserFactory::new(),
+            'subject' => self::faker()->text(150),
         ];
     }
 

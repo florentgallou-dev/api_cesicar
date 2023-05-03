@@ -54,11 +54,9 @@ class Information
     {
         return $this->cesi_name;
     }
-
     public function setCesiName(string $cesi_name): self
     {
         $this->cesi_name = $cesi_name;
-
         return $this;
     }
 
@@ -67,11 +65,9 @@ class Information
         $cesi_position[] = $this->cesi_position;
         return $this->cesi_position;
     }
-
     public function setCesiPosition(array $cesi_position): self
     {
         $this->cesi_position = $cesi_position;
-
         return $this;
     }
 
@@ -79,11 +75,9 @@ class Information
     {
         return $this->contact_email;
     }
-
     public function setContactEmail(string $contact_email): self
     {
         $this->contact_email = $contact_email;
-
         return $this;
     }
 }

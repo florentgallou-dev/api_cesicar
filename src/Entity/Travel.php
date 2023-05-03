@@ -8,14 +8,17 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiFilter;
+use Doctrine\ORM\Mapping\JoinTable;
 use App\Repository\TravelRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
@@ -96,14 +99,22 @@ class Travel
     #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private ?int $number_seats;
 
-    #[ORM\OneToOne(mappedBy: 'travel', cascade: ['persist', 'remove'])]
-    #[Groups(['read:travel'])]
-    private ?Inscription $inscription = null;
-
-    #[ORM\OneToOne(inversedBy: 'travel', cascade: ['persist', 'remove'])]
+//Relationships
+    #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    #[Groups(['read:travels', 'read:travel', 'create:travel'])]
-    private ?User $user;
+    #[Groups(['read:travels', 'read:travel'])]
+    private ?User $user = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
+    #[JoinTable(name: 'travels_voyagers')]
+    #[Groups(['read:travel'])]
+    private Collection $voyagers;
+
+    public function __construct()
+    {
+        $this->setCreatedAt();
+        $this->voyagers = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -112,7 +123,6 @@ class Travel
         }else{
             return $this->getName().' : CESI vers '.json_encode($this->getPosition());
         }
-        
     }
 
     public function getId(): ?int
@@ -124,11 +134,9 @@ class Travel
     {
         return $this->name;
     }
-
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -136,11 +144,9 @@ class Travel
     {
         return $this->toCesi;
     }
-
     public function setToCesi(bool $toCesi): self
     {
         $this->toCesi = $toCesi;
-
         return $this;
     }
 
@@ -149,11 +155,9 @@ class Travel
         $position[] = $this->position;
         return $this->position;
     }
-
     public function setPosition(array $position): self
     {
         $this->position = $position;
-
         return $this;
     }
 
@@ -161,11 +165,9 @@ class Travel
     {
         return $this->departure_date;
     }
-
     public function setDepartureDate(\DateTime $departure_date): self
     {
         $this->departure_date = $departure_date;
-
         return $this;
     }
 
@@ -173,40 +175,42 @@ class Travel
     {
         return $this->number_seats;
     }
-
     public function setNumberSeats(int $number_seats): self
     {
         $this->number_seats = $number_seats;
-
         return $this;
     }
 
-    public function getInscription(): ?Inscription
-    {
-        return $this->inscription;
-    }
 
-    public function setInscription(Inscription $inscription): self
-    {
-        // set the owning side of the relation if necessary
-        if ($inscription->getTravel() !== $this) {
-            $inscription->setTravel($this);
-        }
-
-        $this->inscription = $inscription;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
+//Relationships GETTER SETTERS
+    public function getUser(): User
     {
         return $this->user;
     }
-
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
-
         return $this;
     }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getVoyagers(): Collection
+    {
+        return $this->voyagers;
+    }
+    public function addVoyager(User $voyager): self
+    {
+        if (!$this->voyagers->contains($voyager)) {
+            $this->voyagers->add($voyager);
+        }
+        return $this;
+    }
+    public function removeVoyager(User $voyager): self
+    {
+        $this->voyagers->removeElement($voyager);
+        return $this;
+    }
+
 }

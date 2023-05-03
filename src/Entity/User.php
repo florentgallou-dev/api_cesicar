@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Entity\Report;
 use App\Entity\Travel;
 use App\Entity\Message;
-use App\Entity\Inscription;
 use App\Entity\Conversation;
 use ApiPlatform\Metadata\Patch;
 use App\Controller\MeController;
@@ -14,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -139,25 +140,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private ?bool $isVerified = false;
 
-    // Relationships
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Inscription $inscription;
+// Relationships
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Travel::class)]
+    private ?Collection $travels = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Travel $travel;
+    #[ORM\ManyToMany(targetEntity: Travel::class, mappedBy: 'voyagers')]
+    private ?Collection $inscriptions = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Conversation $conversation;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Conversation::class)]
+    private ?Collection $conversations = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Message $message;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
+    private ?Collection $messages = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Report $report;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Report::class)]
+    private ?Collection $reports = null;
+
+    public function __construct()
+    {
+        $this->setCreatedAt();
+        $this->travels = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->reports = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
         return $this->getFirstName().' '.$this->getLastName();
+    }
+
+    #[Groups(['read:travels', 'read:travel'])]
+    public function getName(): ?string
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function getId(): ?int
@@ -165,21 +182,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    #[Groups(['read:travels'])]
-    public function getName(): ?string
-    {
-        return $this->first_name.' '.$this->last_name;
-    }
-
     public function getFirstName(): ?string
     {
         return $this->first_name;
     }
-
     public function setFirstName(string $first_name): self
     {
         $this->first_name = $first_name;
-
         return $this;
     }
 
@@ -187,11 +196,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->last_name;
     }
-
     public function setLastName(string $last_name): self
     {
         $this->last_name = $last_name;
-
         return $this;
     }
 
@@ -199,16 +206,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return ['homme', 'femme', 'autre'];
     }
-
     public function getGender(): ?string
     {
         return $this->gender;
     }
-
     public function setGender(string $gender): self
     {
         $this->gender = $gender;
-
         return $this;
     }
 
@@ -216,14 +220,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->email;
     }
-
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -242,14 +243,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        
         return array_unique($roles);
     }
-
     public function setRoles(?array $roles): self
     {
         $this->roles = $roles;
-
         return $this;
     }
 
@@ -260,14 +258,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
-
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
         return $this;
     }
-
     /**
      * @see UserInterface
      */
@@ -282,11 +277,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $position[] = $this->position;
         return $this->position;
     }
-
     public function setPosition(array $position): self
     {
         $this->position = $position;
-
         return $this;
     }
 
@@ -294,11 +287,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->driver;
     }
-
     public function setDriver(bool $driver): self
     {
         $this->driver = $driver;
-
         return $this;
     }
 
@@ -306,12 +297,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->car_type;
     }
-
     public function setCarType(?string $car_type): self
     {
-
         $this->car_type = $car_type;
-
         return $this;
     }
 
@@ -319,11 +307,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->car_registration;
     }
-
     public function setCarRegistration(?string $car_registration): self
     {
         $this->car_registration = $car_registration;
-
         return $this;
     }
 
@@ -331,7 +317,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->deleted_at;
     }
-
     public function setDeletedAt(bool $deleted_at): self
     {
         if ($deleted_at) {
@@ -340,106 +325,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getInscription(): ?Inscription
-    {
-        return $this->inscription;
-    }
-
-    public function setInscription(Inscription $inscription): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($inscription->getUser() !== $this) {
-            $inscription->setUser($this);
-        }
-
-        $this->inscription = $inscription;
-
-        return $this;
-    }
-
-    public function getTravel(): ?Travel
-    {
-        return $this->travel;
-    }
-
-    public function setTravel(Travel $travel): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($travel->getUser() !== $this) {
-            $travel->setUser($this);
-        }
-
-        $this->travel = $travel;
-
-        return $this;
-    }
-
-    public function getConversation(): ?Conversation
-    {
-        return $this->conversation;
-    }
-
-    public function setConversation(Conversation $conversation): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($conversation->getUser() !== $this) {
-            $conversation->setUser($this);
-        }
-
-        $this->conversation = $conversation;
-
-        return $this;
-    }
-
-    public function getMessage(): ?Message
-    {
-        return $this->message;
-    }
-
-    public function setMessage(Message $message): self
-    {
-
-        // set the owning side of the relation if necessary
-        if ($message->getUser() !== $this) {
-            $message->setUser($this);
-        }
-
-        $this->message = $message;
-
-        return $this;
-    }
-
-    public function getReport(): ?Report
-    {
-        return $this->report;
-    }
-
-    public function setReport(Report $report): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($report->getUser() !== $this) {
-            $report->setUser($this);
-        }
-
-        $this->report = $report;
-
-        return $this;
-    }
-
     public function getCarNbPlaces(): ?int
     {
         return $this->car_nb_places;
     }
-
     public function setCarNbPlaces(?int $car_nb_places): self
     {
-        
         $this->car_nb_places = $car_nb_places;
-
         return $this;
     }
 
@@ -447,11 +339,138 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->isVerified;
     }
-
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
+
+//Relationships GETTER SETTERS
+    /**
+     * @return Collection<int, Travel>
+     */
+    public function getTravels(): Collection
+    {
+        return $this->travels;
+    }
+    public function addTravel(Travel $travel): self
+    {
+        if (!$this->travels->contains($travel)) {
+            $this->travels->add($travel);
+            $travel->setUser($this);
+        }
+        return $this;
+    }
+    public function removeTravel(Travel $travel): self
+    {
+        if ($this->travels->removeElement($travel)) {
+            // set the owning side to null (unless already changed)
+            if ($travel->getUser() === $this) {
+                $travel->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Travel>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+    public function addInscription(Travel $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->addVoyager($this);
+        }
+        return $this;
+    }
+    public function removeInscription(Travel $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            $inscription->removeVoyager($this);
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Travel>
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+    public function addConversation(Travel $conversation): self
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations->add($conversation);
+            $conversation->setUser($this);
+        }
+        return $this;
+    }
+    public function removeConversation(Travel $conversation): self
+    {
+        if ($this->conversations->removeElement($conversation)) {
+            // set the owning side to null (unless already changed)
+            if ($conversation->getUser() === $this) {
+                $conversation->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setUser($this);
+        }
+        return $this;
+    }
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Report>
+     */
+    public function getReports(): Collection
+    {
+        return $this->reports;
+    }
+    public function addReport(Report $report): self
+    {
+        if (!$this->reports->contains($report)) {
+            $this->reports->add($report);
+            $report->setUser($this);
+        }
+        return $this;
+    }
+    public function removeReport(Report $report): self
+    {
+        if ($this->reports->removeElement($report)) {
+            // set the owning side to null (unless already changed)
+            if ($report->getUser() === $this) {
+                $report->setUser(null);
+            }
+        }
+        return $this;
+    }
+
 }

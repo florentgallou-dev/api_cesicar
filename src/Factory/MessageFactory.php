@@ -47,10 +47,8 @@ final class MessageFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'conversation' => ConversationFactory::new(),
-            'created_at' => self::faker()->dateTime(),
             'message' => self::faker()->text(),
-            'updated_at' => self::faker()->dateTime(),
+            'conversation' => ConversationFactory::new(),
             'user' => UserFactory::new(),
         ];
     }
