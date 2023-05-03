@@ -12,6 +12,7 @@ use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\JoinTable;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
@@ -145,6 +146,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Travel::class, cascade: ['persist', 'remove'])]
     private ?Collection $travels = null;
 
+    #[ORM\ManyToMany(targetEntity: Travel::class, mappedBy: 'voyagers')]
+    private Collection $inscriptions;
+
+
+
 
 
  
@@ -153,6 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->travels = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -391,4 +398,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+
+    /**
+     * @return Collection<int, Travel>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+    public function addInscription(Travel $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->addVoyager($this);
+        }
+        return $this;
+    }
+    public function removeInscription(Travel $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            $inscription->removeVoyager($this);
+        }
+        return $this;
+    }
+
+
 }

@@ -29,8 +29,10 @@ npm install
 
 ## 4/ Create .env
 ```bash
-Create file .env.local il your root folder
+Create file .env.local in your root folder
+```
 Add this line with your DB parametes : 
+```bash
 DATABASE_URL="mysql://login:password@127.0.0.1:3306/databasename?serverVersion=yourmysqlversion"
 ```
 

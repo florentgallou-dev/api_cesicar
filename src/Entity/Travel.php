@@ -8,14 +8,17 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiFilter;
+use Doctrine\ORM\Mapping\JoinTable;
 use App\Repository\TravelRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
@@ -99,7 +102,18 @@ class Travel
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private ?User $user = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
+    #[JoinTable(name: 'travels_voyagers')]
+    private Collection $voyagers;
+
+    public function __construct()
+    {
+        $this->voyagers = new ArrayCollection();
+    }
+
+
 
 
 
@@ -186,10 +200,32 @@ class Travel
     {
         return $this->user;
     }
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
         return $this;
     }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getVoyagers(): Collection
+    {
+        return $this->voyagers;
+    }
+    public function addVoyager(User $voyager): self
+    {
+        if (!$this->voyagers->contains($voyager)) {
+            $this->voyagers->add($voyager);
+        }
+        return $this;
+    }
+    public function removeVoyager(User $voyager): self
+    {
+        $this->voyagers->removeElement($voyager);
+        return $this;
+    }
+
+
 
 }
