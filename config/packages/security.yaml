@@ -30,7 +30,7 @@ security:
                         check_path: app_login
             json_login:
                 # api_login is a route we will create below
-                check_path: app_api_login
+                check_path: api_login
             
             # configure the maximum login attempts
             login_throttling:
@@ -38,7 +38,7 @@ security:
                 # interval: '15 minutes' # ... or in a custom period
             
             logout:
-                path: app_logout
+                path: api_logout
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

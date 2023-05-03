@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ApiLoginController extends AbstractController
+class SecurityController extends AbstractController
 {
-    #[Route('/api/login', name: 'app_api_login', methods: ['POST'])]
+    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     public function index(#[CurrentUser] ?User $user): JsonResponse
     {
         if (null === $user) {
@@ -27,4 +27,12 @@ class ApiLoginController extends AbstractController
             'token' => $token,
         ]);
     }
+
+    #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
+    public function logout()
+    {
+
+    }
+
+
 }

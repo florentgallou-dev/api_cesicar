@@ -23,6 +23,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
 #[ApiResource(
+    security: 'is_granted("ROLE_USER")',
     operations: [
         new GetCollection(
                 uriTemplate: '/me',
@@ -31,6 +32,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
                 paginationEnabled: false,
                 read: true,
                 output: false,
+                openapiContext: ['cookiesAuth' => []]
+                // security: 'is_granted("ROLE_USER")'
         ),
         new Patch(normalizationContext: ['groups' => 'update:user']),
         // new Post(
