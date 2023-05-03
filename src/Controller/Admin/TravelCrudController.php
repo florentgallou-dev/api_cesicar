@@ -36,8 +36,9 @@ class TravelCrudController extends AbstractCrudController
     {
         return $actions
             ->add(Crud::PAGE_EDIT, Action::INDEX)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_EDIT, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->remove(Crud::PAGE_INDEX, Action::NEW)
             ;
     }
 
@@ -53,6 +54,7 @@ class TravelCrudController extends AbstractCrudController
         yield DateField::new('departure_date', 'Date de départ');
         yield NumberField::new('number_seats', 'Places disponibles');
 
-        yield AssociationField::new('inscription');
+        yield AssociationField::new('voyagers');
+        yield AssociationField::new('user');
     }
 }
