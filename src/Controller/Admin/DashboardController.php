@@ -46,7 +46,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Voyages');
         yield MenuItem::linkToCrud('Voyages', 'fas fa-route', Travel::class);
-        yield MenuItem::linkToCrud('Inscriptions', 'fas fa-receipt', Inscription::class);
 
         yield MenuItem::section('Conversations');
         yield MenuItem::linkToCrud('Conversations', 'fas fa-comments', Conversation::class);

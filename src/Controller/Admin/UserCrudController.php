@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
-use Doctrine\DBAL\Types\JsonType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -95,11 +94,11 @@ class UserCrudController extends AbstractCrudController
         yield IntegerField::new('car_nb_places', 'Nombre de places')
                             ->hideOnIndex();
 
-        yield AssociationField::new('inscription');
-        yield AssociationField::new('travel');
-        yield AssociationField::new('conversation');
-        yield AssociationField::new('message');
-        yield AssociationField::new('report');
+        yield AssociationField::new('travels', 'Voyages')->setCrudController(TravelCrudController::class);
+        yield AssociationField::new('inscriptions', 'Inscriptions')->setCrudController(TravelCrudController::class);
+        yield AssociationField::new('conversations', 'Conversations');
+        yield AssociationField::new('messages', 'Messages');
+        yield AssociationField::new('reports', 'Rapports');
 
     }
 
