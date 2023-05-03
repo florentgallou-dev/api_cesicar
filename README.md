@@ -146,3 +146,22 @@ connect with your credentials or this admin :
 - user.name = first_name.' '.last_name (of driver)
 
 </details>
+
+<details>
+<summary>ROUTES</summary>
+
+## API JWT
+If you log correctly with : 
+127.0.0.1:8000/api/login
+
+You'll get a Tocken like this :
+```bash
+{
+	"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2ODMxMTc4NTIsImV4cCI6MTY4MzEyMTQ1Miwicm9sZXMiOlsiUk9MRV9TVVBFUkFETUlOIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZmxvcmVudC5nYWxsb3VAdmlhY2VzaS5mciJ9.GlrP61Tv_qI3gI3MKEOuLT9QoFob-Iu8lp2MwlCvQ9RiTLFFvVhCaq8ZvnFspgp-wrmrFc6VBfOsZ3_p8EgS6JLLL367QobCLRVWkdskMRpreaE0Fqwdu84P2xQX9ArCnxJbpbffE6ISIDV7T_t1K3pGwMzC4dcCRAVJMr2LtRgR0uV70-OT4dbqI_RnEYxN7rnAdYtKNblVZ54dFbjs4SveBXJD89WJ-IVbyM-rGwR25sHZkfirFGxbROuvI8oZy8JBt738kQbJCRq4bgdzEPVCpN_UpNiWJdlKdJPvoo8-M78NjYGE04x2si3Ms3HT5hDtzk7VoMFo3JouPAQibA"
+}
+```
+You can decode this tocken here :
+https://jwt.io/#debugger-io
+
+Just copy/paste the api tocken to see result
+</details>
