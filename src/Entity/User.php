@@ -14,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -139,21 +141,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private ?bool $isVerified = false;
 
-    // Relationships
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Inscription $inscription;
+// Relationships
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Travel::class, cascade: ['persist', 'remove'])]
+    private ?Collection $travels = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Travel $travel;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Conversation $conversation;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Message $message;
+ 
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Report $report;
+
+    public function __construct()
+    {
+        $this->travels = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -340,96 +340,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getInscription(): ?Inscription
-    {
-        return $this->inscription;
-    }
-
-    public function setInscription(Inscription $inscription): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($inscription->getUser() !== $this) {
-            $inscription->setUser($this);
-        }
-
-        $this->inscription = $inscription;
-
-        return $this;
-    }
-
-    public function getTravel(): ?Travel
-    {
-        return $this->travel;
-    }
-
-    public function setTravel(Travel $travel): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($travel->getUser() !== $this) {
-            $travel->setUser($this);
-        }
-
-        $this->travel = $travel;
-
-        return $this;
-    }
-
-    public function getConversation(): ?Conversation
-    {
-        return $this->conversation;
-    }
-
-    public function setConversation(Conversation $conversation): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($conversation->getUser() !== $this) {
-            $conversation->setUser($this);
-        }
-
-        $this->conversation = $conversation;
-
-        return $this;
-    }
-
-    public function getMessage(): ?Message
-    {
-        return $this->message;
-    }
-
-    public function setMessage(Message $message): self
-    {
-
-        // set the owning side of the relation if necessary
-        if ($message->getUser() !== $this) {
-            $message->setUser($this);
-        }
-
-        $this->message = $message;
-
-        return $this;
-    }
-
-    public function getReport(): ?Report
-    {
-        return $this->report;
-    }
-
-    public function setReport(Report $report): self
-    {
-        
-        // set the owning side of the relation if necessary
-        if ($report->getUser() !== $this) {
-            $report->setUser($this);
-        }
-
-        $this->report = $report;
-
-        return $this;
-    }
-
     public function getCarNbPlaces(): ?int
     {
         return $this->car_nb_places;
@@ -452,6 +362,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isVerified = $isVerified;
 
+        return $this;
+    }
+
+//Relationships GETTER SETTERS
+    /**
+     * @return Collection<int, Travel>
+     */
+    public function getTravels(): Collection
+    {
+        return $this->travels;
+    }
+    public function addTravel(Travel $travel): self
+    {
+        if (!$this->travels->contains($travel)) {
+            $this->travels->add($travel);
+            $travel->setUser($this);
+        }
+        return $this;
+    }
+    public function removeTravel(Travel $travel): self
+    {
+        if ($this->travels->removeElement($travel)) {
+            // set the owning side to null (unless already changed)
+            if ($travel->getUser() === $this) {
+                $travel->setUser(null);
+            }
+        }
         return $this;
     }
 }

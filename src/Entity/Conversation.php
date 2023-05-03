@@ -26,7 +26,8 @@ class Conversation
     #[ORM\Column(length: 150)]
     private ?string $subject;
 
-    #[ORM\OneToOne(mappedBy: 'conversation', cascade: ['persist', 'remove'])]
+    
+    #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'conversation', cascade: ['persist', 'remove'])]
     private ?Message $message;
 
     public function __toString(): string

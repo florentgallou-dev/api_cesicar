@@ -48,9 +48,15 @@ php bin/console doctrine:s:u --force
 ```bash
 php bin/console doctrine:fixtures:load
 ```
+
 ## 8/ Start API / BackOffice
 ```bash
 symfony server:start
+```
+
+## 9/ Generate JWT keys
+```bash
+php bin/console lexik:jwt:generate-keypair
 ```
 
 ## Optional/ Create first admin user
@@ -86,6 +92,11 @@ composer install && npm install
 Also you may want to check if migrations have to be done
 ```bash
 php bin/console doctrine:s:u --dump-sql
+```
+
+Dont forget to generate your JWT Keys
+```bash
+php bin/console lexik:jwt:generate-keypair
 ```
 </details>
 

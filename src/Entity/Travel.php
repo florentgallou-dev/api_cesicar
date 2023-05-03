@@ -96,14 +96,13 @@ class Travel
     #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private ?int $number_seats;
 
-    #[ORM\OneToOne(mappedBy: 'travel', cascade: ['persist', 'remove'])]
-    #[Groups(['read:travel'])]
-    private ?Inscription $inscription = null;
+//Relationships
+    #[ORM\ManyToOne(inversedBy: 'travels')]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
 
-    #[ORM\OneToOne(inversedBy: 'travel', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    #[Groups(['read:travels', 'read:travel', 'create:travel'])]
-    private ?User $user;
+
+
 
     public function __toString(): string
     {
@@ -181,32 +180,16 @@ class Travel
         return $this;
     }
 
-    public function getInscription(): ?Inscription
-    {
-        return $this->inscription;
-    }
 
-    public function setInscription(Inscription $inscription): self
-    {
-        // set the owning side of the relation if necessary
-        if ($inscription->getTravel() !== $this) {
-            $inscription->setTravel($this);
-        }
-
-        $this->inscription = $inscription;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
+//Relationships GETTER SETTERS
+    public function getUser(): User
     {
         return $this->user;
     }
-
     public function setUser(User $user): self
     {
         $this->user = $user;
-
         return $this;
     }
+
 }
