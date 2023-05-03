@@ -38,7 +38,7 @@ security:
                 # interval: '15 minutes' # ... or in a custom period
             
             logout:
-                path: app_logout
+                path: api_logout
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
