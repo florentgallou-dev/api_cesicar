@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\User;
 use App\Entity\Message;
 use App\Entity\Trait\Timestamps;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ConversationRepository;
 
@@ -19,16 +21,21 @@ class Conversation
     #[ORM\Column]
     private ?int $id;
 
-    #[ORM\OneToOne(inversedBy: 'conversation', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?User $user;
-
     #[ORM\Column(length: 150)]
     private ?string $subject;
 
-    
-    #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'conversation', cascade: ['persist', 'remove'])]
-    private ?Message $message;
+//Relationships
+    #[ORM\ManyToOne(inversedBy: 'conversations')]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
+    private ?User $user = null;
+
+    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class)]
+    private Collection $messages;
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -40,44 +47,51 @@ class Conversation
         return $this->id;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getSubject(): ?string
     {
         return $this->subject;
     }
-
     public function setSubject(string $subject): self
     {
         $this->subject = $subject;
-
         return $this;
     }
 
-    public function getMessage(): ?Message
+//Relationships GETTER SETTERS
+    public function getUser(): ?User
     {
-        return $this->message;
+        return $this->user;
+    }
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
     }
 
-    public function setMessage(Message $message): self
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
     {
-        // set the owning side of the relation if necessary
-        if ($message->getConversation() !== $this) {
+        return $this->messages;
+    }
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
             $message->setConversation($this);
         }
-
-        $this->message = $message;
-
         return $this;
     }
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getConversation() === $this) {
+                $message->setConversation(null);
+            }
+        }
+        return $this;
+    }
+
 }

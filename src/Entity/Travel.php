@@ -101,7 +101,7 @@ class Travel
 
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'travels')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
@@ -113,11 +113,6 @@ class Travel
         $this->voyagers = new ArrayCollection();
     }
 
-
-
-
-
-
     public function __toString(): string
     {
         if($this->isToCesi()){
@@ -125,7 +120,6 @@ class Travel
         }else{
             return $this->getName().' : CESI vers '.json_encode($this->getPosition());
         }
-        
     }
 
     public function getId(): ?int
@@ -137,11 +131,9 @@ class Travel
     {
         return $this->name;
     }
-
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -149,11 +141,9 @@ class Travel
     {
         return $this->toCesi;
     }
-
     public function setToCesi(bool $toCesi): self
     {
         $this->toCesi = $toCesi;
-
         return $this;
     }
 
@@ -162,11 +152,9 @@ class Travel
         $position[] = $this->position;
         return $this->position;
     }
-
     public function setPosition(array $position): self
     {
         $this->position = $position;
-
         return $this;
     }
 
@@ -174,11 +162,9 @@ class Travel
     {
         return $this->departure_date;
     }
-
     public function setDepartureDate(\DateTime $departure_date): self
     {
         $this->departure_date = $departure_date;
-
         return $this;
     }
 
@@ -186,11 +172,9 @@ class Travel
     {
         return $this->number_seats;
     }
-
     public function setNumberSeats(int $number_seats): self
     {
         $this->number_seats = $number_seats;
-
         return $this;
     }
 
@@ -225,7 +209,5 @@ class Travel
         $this->voyagers->removeElement($voyager);
         return $this;
     }
-
-
 
 }

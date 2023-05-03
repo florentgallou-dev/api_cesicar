@@ -21,16 +21,17 @@ class Message
     #[ORM\Column]
     private ?int $id;
 
-    #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?User $user;
-
-    #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?Conversation $conversation;
-
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message;
+    
+//Relationships
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
+    private ?Conversation $conversation = null;
 
     public function __toString(): string
     {
@@ -42,15 +43,24 @@ class Message
         return $this->id;
     }
 
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+//Relationships GETTER SETTERS
     public function getUser(): ?User
     {
         return $this->user;
     }
-
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -58,23 +68,9 @@ class Message
     {
         return $this->conversation;
     }
-
-    public function setConversation(Conversation $conversation): self
+    public function setConversation(?Conversation $conversation): self
     {
         $this->conversation = $conversation;
-
-        return $this;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->message;
-    }
-
-    public function setMessage(string $message): self
-    {
-        $this->message = $message;
-
         return $this;
     }
 
