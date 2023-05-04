@@ -11,6 +11,8 @@ use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,6 +25,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     security: 'is_granted("ROLE_USER")',
     operations: [
@@ -43,7 +46,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
-)]
+),
+ApiFilter(ExistsFilter::class, properties: ['deleted_at'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use Timestamps;
