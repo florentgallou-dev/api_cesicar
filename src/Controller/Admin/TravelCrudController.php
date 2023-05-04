@@ -29,7 +29,7 @@ class TravelCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Voyages')
             ->setSearchFields(['name', 'user'])
             ->setDefaultSort(['created_at' => 'DESC'])
-            ->setEntityPermission('ROLE_USER');
+            ->setEntityPermission('ROLE_EDITOR');
     }
 
     public function configureActions(Actions $actions): Actions
