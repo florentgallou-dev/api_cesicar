@@ -2,9 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\InformationRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;

@@ -3,10 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\User;
-use App\Entity\Inscription;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
-use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use App\Entity\Trait\Timestamps;
@@ -17,8 +15,10 @@ use App\Repository\TravelRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use Doctrine\Common\Collections\ArrayCollection;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
@@ -51,13 +51,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     order: ['id' => 'ASC'],
     paginationEnabled: false,
     description: 'Resources des trajets proposés par nos conducteurs'
-)]
-// #[ApiFilter(
-//     SearchFilter::class,
-//     properties: [
-//         "end_point" => "exact"
-//     ]
-// )]
+),
+ApiFilter(TermFilter::class, properties: ['toCesi']),
+ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER)]
 class Travel
 {
     use Timestamps;
@@ -77,6 +73,7 @@ class Travel
     **/
     #[ORM\Column(type: 'boolean')]
     #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    #[ApiFilter(BooleanFilter::class)]
     private ?bool $toCesi = false;
 
     /**

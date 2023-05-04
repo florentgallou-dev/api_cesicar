@@ -7,7 +7,6 @@ use Doctrine\DBAL\Types\Types;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReportRepository;
-use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
 #[ORM\HasLifecycleCallbacks]
