@@ -27,7 +27,7 @@ class ReportCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Rapports')
             ->setSearchFields(['user', 'type_reportable'])
             ->setDefaultSort(['created_at' => 'DESC'])
-            ->setEntityPermission('ROLE_USER');
+            ->setEntityPermission('ROLE_EDITOR');
     }
 
     public function configureActions(Actions $actions): Actions
