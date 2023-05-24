@@ -5,6 +5,7 @@ CURRENT_PATH=$(pwd)
 cd "$SCRIPT_PATH" || exit
 
 ./npm install
+./npm run build
 ./composer install
 ./console doctrine:s:u --force --complete
 ./console doctrine:m:m --allow-no-migration
