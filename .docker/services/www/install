@@ -1,0 +1,8 @@
+#!/bin/bash
+
+npm install
+npm run build
+composer install
+php bin/console doctrine:s:u --force --complete
+php bin/console doctrine:m:m --allow-no-migration
+php bin/console doctrine:fixtures:load

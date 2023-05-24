@@ -32,6 +32,7 @@ services:
         volumes:
             - ./.docker/services/www/vhosts:/etc/apache2/sites-enabled
             - ./:/var/www
+            - ./.docker/services/www/install:/install
 
 volumes:
     db-data:
