@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCRIPT_PATH=$(cd "$(dirname "$0")" >/dev/null 2>&1 || exit ; pwd -P)
+CURRENT_PATH=$(pwd)
+cd "$SCRIPT_PATH" || exit
+
+./npm install
+./composer install
+./console doctrine:s:u --force --complete
+./console doctrine:m:m --allow-no-migration
+./console doctrine:fixtures:load
+
+cd "$CURRENT_PATH" || exit
