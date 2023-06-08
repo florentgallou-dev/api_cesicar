@@ -50,7 +50,13 @@ class TravelCrudController extends AbstractCrudController
 
         yield TextField::new('name', 'Nom du voyage');
         yield BooleanField::new('to_cesi', 'Voyage en direction de CESI')->renderAsSwitch(true);
-        yield ArrayField::new('position', 'Arrivée');
+        yield ArrayField::new('position', 'Position')
+                ->onlyOnForms();
+        yield TextField::new('adress', 'Adresse')
+                ->onlyOnForms();
+        yield NumberField::new('zip_code', 'Code postal')
+                ->onlyOnForms();
+        yield TextField::new('city', 'Ville');
         yield DateField::new('departure_date', 'Date de départ');
         yield NumberField::new('number_seats', 'Places disponibles');
 

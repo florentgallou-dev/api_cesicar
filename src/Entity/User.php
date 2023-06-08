@@ -25,11 +25,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
-#[ORM\HasLifecycleCallbacks]
+// #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     security: 'is_granted("ROLE_USER")',
     operations: [
         new GetCollection(
+                description: 'Get the actualy connected User',
                 uriTemplate: '/me',
                 controller: MeController::class,
                 normalizationContext: ['groups' => 'read:user'],
@@ -38,11 +39,16 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
                 openapiContext: ['cookiesAuth' => []],
                 security: 'is_granted("ROLE_USER")'
         ),
-        new Patch(normalizationContext: ['groups' => 'update:user']),
-        // new Post(
-        //     uriTemplate: '/user',
-        //     normalizationContext: ['groups' => 'create:user']
-        // ),
+        new Patch(
+            description: 'Get the actualy connected User',
+            uriTemplate: '/me',
+            controller: MeController::class,
+            normalizationContext: ['groups' => 'read:user'],
+            paginationEnabled: false,
+            read: true,
+            openapiContext: ['cookiesAuth' => []],
+            security: 'is_granted("ROLE_USER")'
+        ),
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
@@ -61,15 +67,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank(message: "Votre prénom est nécessaire à votre enregistrement.")]
     #[Assert\Length(
-            min: 3, max: 50,
-            minMessage: 'Votre prénom doit comporter au minimum 3 caractères.',
-            maxMessage: 'Votre prénom ne peux dépasser 50 caractères.'
+            min: 3,
+            max: 150
     )]
     #[Groups(['read:user'])]
-    private ?string $first_name;
+    private string $first_name;
 
     #[ORM\Column(length: 150)]
-    #[Assert\NotBlank(message: "Votre nom est nécessaire à votre enregistrement.")]
+    #[Assert\NotBlank]
     #[Assert\Length(
             min: 3,
             max: 50,
@@ -77,7 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             maxMessage: 'Votre nom ne peux dépasser 50 caractères.'
     )]
     #[Groups(['read:user'])]
-    private ?string $last_name;
+    private string $last_name;
 
     #[ORM\Column(length: 5)]
     #[Assert\NotBlank(message: "Votre genre est nécessaire à votre enregistrement.")]
@@ -115,7 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Le type de votre véhicule est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'read:travel'])]
     private ?string $car_type = null;
 
     #[ORM\Column(length: 15, nullable: true)]
@@ -125,7 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Votre plaque d'imatriculation est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'read:travel'])]
     private ?string $car_registration = null;
 
     #[ORM\Column(nullable: true)]

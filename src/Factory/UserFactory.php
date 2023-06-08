@@ -48,6 +48,21 @@ final class UserFactory extends ModelFactory
      */
     protected function getDefaults(): array
     {
+        $localizations = [
+            [
+                'position'  => [49.398727, 1.066153],
+                'adress'    => '',    
+                'zip_code'  => 9,    
+                'city'      => '',    
+            ],
+            [
+                'position'  => [49.398727, 1.066153],
+                'adress'    => '',    
+                'zip_code'  => 9,    
+                'city'      => '',    
+            ],
+        ];
+
         $faker = Faker\Factory::create('fr_FR');
         $driver = $faker->boolean();
         if($driver){

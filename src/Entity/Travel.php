@@ -20,6 +20,7 @@ use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -27,23 +28,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
     shortName: 'Travel',
     operations: [
         new GetCollection(
-            uriTemplate: '/travels',
             description: 'Retrieves the collection of Travels',
+            uriTemplate: '/travels',
             normalizationContext: ['groups' => 'read:travels']
         ),
         new Get(
+            description: 'Retrieves one Travel',
             uriTemplate: '/travel/{id}',
             normalizationContext: ['groups' => 'read:travel']
         ),
         new Post(
+            description: 'Creates a new travel',
             uriTemplate: '/travel',
             normalizationContext: ['groups' => 'create:travel']
         ),
         new Patch(
+            description: 'Update an existing Travel',
             uriTemplate: '/travel/{id}',
             normalizationContext: ['groups' => 'update:travel']
         ),
         new Delete(
+            description: 'Delete a travel and cascade delete all it\s voyagers subscriptions',
             uriTemplate: '/travel/{id}',
             normalizationContext: ['groups' => 'delete:travel']
         ),
@@ -65,7 +70,7 @@ class Travel
     private ?int $id;
 
     #[ORM\Column(length: 250)]
-    #[Groups(['create:travel', 'update:travel'])]
+    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
     private ?string $name;
 
     /**
@@ -84,6 +89,22 @@ class Travel
     #[ORM\Column(type: 'json', nullable: true)]
     #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
     private ?array $position;
+
+    #[ORM\Column(length: 250)]
+    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
+    private ?string $adress;
+
+    #[ORM\Column(length: 99999)]
+    #[Assert\Length(
+        min: 0,
+        max: 99999
+    )]
+    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
+    private ?int $zip_code;
+
+    #[ORM\Column(length: 150)]
+    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
+    private ?string $city;
 
     /**
     *   Datetime telling when travel starts, use it with travel information to calculate traveltime
@@ -155,6 +176,36 @@ class Travel
     public function setPosition(array $position): self
     {
         $this->position = $position;
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+    public function setAdress(string $adress): self
+    {
+        $this->adress = $adress;
+        return $this;
+    }
+
+    public function getZipCode(): ?int
+    {
+        return $this->zip_code;
+    }
+    public function setZipCode(int $zip_code): self
+    {
+        $this->zip_code = $zip_code;
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
         return $this;
     }
 
