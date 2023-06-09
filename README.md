@@ -18,47 +18,42 @@ It also provides a great help il focusin on api helpers and understanding of dat
     git clone repositoryName
   ```
 
-  ## 2/ install vendors
-  ```bash
-    composer install
-  ```
-  ## 3/ install nodes
-  ```bash
-  npm install
-  ```
-
-  ## 4/ Create .env
+ ## 2/ Create .env
   ```bash
   Create file .env.local in your root folder
   ```
-  Add this line with your DB parametes : 
+Add this line with your DB parametes :
   ```bash
-  DATABASE_URL="mysql://login:password@127.0.0.1:3306/databasename?serverVersion=yourmysqlversion"
+    DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"
   ```
 
-  ## 5/ Create the Database
+  ## 3/ build docker
   ```bash
-  php bin/console doctrine:database:create
+    cd .docker
+  ```
+  ```bash
+    docker-compose build www
+  ```
+  ```bash
+    docker-compose up -d
+  ```
+  ```bash
+    bin/install
   ```
 
-  ## 6/ Apply DB migrations :
+  ## 4/ up the project 
   ```bash
-  php bin/console doctrine:s:u --force
+  docker-compose up -d
   ```
 
-  ## 7/ Run fixtures to furnish the databases with starting datas
-  ```bash
-  php bin/console doctrine:fixtures:load
-  ```
+  ## link of the projet locally
+  - projet - http://localhost:8000/
+  - phpmyadmin - http://localhost:8080/
 
-  ## 8/ Start API / BackOffice
-  ```bash
-  symfony server:start
-  ```
 
-  ## 9/ Generate JWT keys
+  ## 5/ Generate JWT keys
   ```bash
-  php bin/console lexik:jwt:generate-keypair
+  docker-compose exec php bin/console lexik:jwt:generate-keypair
   ```
 
   ## Optional/ Create first admin user
@@ -88,17 +83,17 @@ It also provides a great help il focusin on api helpers and understanding of dat
 
   Dont forget to watch changes, it may be needed to do so :
   ```bash
-  composer install && npm install
+  docker-compose exec composer install && npm install
   ```
 
   Also you may want to check if migrations have to be done
   ```bash
-  php bin/console doctrine:s:u --dump-sql
+  docker-compose exec php bin/console doctrine:s:u --dump-sql
   ```
 
   Dont forget to generate your JWT Keys
   ```bash
-  php bin/console lexik:jwt:generate-keypair
+   docker-compose exec php bin/console lexik:jwt:generate-keypair
   ```
 </details>
 
