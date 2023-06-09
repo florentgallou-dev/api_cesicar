@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - 80:80
+    # Copier dans le dossier de l'app le contenu du dossier php de l'image pour overider le fichier facilement
+    volumes:
+      - ./.docker/php:/usr/local/etc/php
+      - .:/var/www/html
+    # command: npm install
+  

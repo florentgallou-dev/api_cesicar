@@ -177,27 +177,87 @@ It also provides a great help il focusin on api helpers and understanding of dat
   https://jwt.io/#debugger-io
 
   Just copy/paste the api tocken to see result
-  </details>
+</details>
 
 <details>
 <summary>API FILTERS</summary>
-Filters are made to be chainable, you can add filters in what order you want and change paremeters as you need
 
-## Travel filters
-To get only travels that goes to CESI
-http://127.0.0.1:8000/api/travels?toCesi=true
+  Filters are made to be chainable, you can add filters in what order you want and change paremeters as you need
 
-To get only travels that goes back from CESI
-http://127.0.0.1:8000/api/travels?toCesi=false
+  ## Travel filters
+  To get only travels that goes to CESI
+  http://127.0.0.1:8000/api/travels?toCesi=true
 
-To get only travels that goes back from CESI with dates before july 2023
-http://127.0.0.1:8000/api/travels?toCesi=true&departure_date%5Bbefore%5D=2023-07
+  To get only travels that goes back from CESI
+  http://127.0.0.1:8000/api/travels?toCesi=false
 
-To get only travels that goes back from CESI with dates after july 2023
-http://127.0.0.1:8000/api/travels?toCesi=true&departure_date%5Bbefore%5D=2023-07
+  To get only travels that goes back from CESI with dates before july 2023
+  http://127.0.0.1:8000/api/travels?toCesi=true&departure_date%5Bbefore%5D=2023-07
 
-To get only travels that goes back from CESI with dates between mai 2023 and july 2023
-http://127.0.0.1:8000/api/travels?toCesi=true&departure_date%5Bbefore%5D=2023-07&departure_date%5Bafter%5D=2023-05
+  To get only travels that goes back from CESI with dates after july 2023
+  http://127.0.0.1:8000/api/travels?toCesi=true&departure_date%5Bbefore%5D=2023-07
+
+  To get only travels that goes back from CESI with dates between mai 2023 and july 2023
+  http://127.0.0.1:8000/api/travels?toCesi=true&departure_date%5Bbefore%5D=2023-07&departure_date%5Bafter%5D=2023-05
 
 </details>
 
+<details>
+<summary>DOCKER</summary>
+
+### 1/ Créer le fichier Dockerfile dans la racide du projet symfony
+
+### 2/ Builder l'image
+``` bash
+docker build -t cesicar-api-bo .
+```
+
+### 3/ Lancer l'image
+Attention sous linux à bien arrêter le serveur apache au besoin : sudo service apache2 stop
+``` bash
+docker run -d -p 80:80 --name img-cesicarboapi cesicar-api-bo
+```
+
+### 4/ Copier fichier php.ini de l'image en local pour pouvoir configurer le fichier
+``` bash
+docker cp img-cesicarboapi:/usr/local/etc/php ./.docker/php
+```
+
+### 5/ Arrêter l'image
+``` bash
+docker ps
+docker stop 9d91536e0fca
+```
+
+<!-- ### 6/ Lancer l'image avec la relation entre le fichier ini en local et celui dans l'image
+``` bash
+sudo docker run -d -p 80:80 -v $(pwd)/usr/local/etc/php:/docker/ --name my-php-app project-php
+``` -->
+
+### 7/ Créer le fichier docker-compose.yml en racine
+
+### 8/ Lancer docker compose
+``` bash
+sudo docker compose up
+```
+
+### 9/ Pour symfony changer la source du point d'entrée index.php dans le dockerfile :
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+### 10/ Add extensions in Dockerfile:
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+### 11/ Décommenter les extensions dans le fichier local docker/php.ini
+extension=mysqli
+extension=pdo_mysql
+
+doc traefic
+Gérer les certificats SSL
+--certificatesresolvers.myresolver.acme.httpchallenge=true
+--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+--certificatesresolvers.myresolver.acme.caserve=https://acme-staging-v02.api-letsencrypt.org/diectory
+
+</details>
