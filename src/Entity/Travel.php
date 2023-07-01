@@ -90,22 +90,6 @@ class Travel
     #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
     private ?array $position;
 
-    #[ORM\Column(length: 250)]
-    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
-    private ?string $adress;
-
-    #[ORM\Column(length: 99999)]
-    #[Assert\Length(
-        min: 0,
-        max: 99999
-    )]
-    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
-    private ?int $zip_code;
-
-    #[ORM\Column(length: 150)]
-    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
-    private ?string $city;
-
     /**
     *   Datetime telling when travel starts, use it with travel information to calculate traveltime
     **/
@@ -117,6 +101,15 @@ class Travel
     #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private ?int $number_seats;
 
+    /**
+    *   If isPublic = true, travel is shared with everyone,
+    *   If isPublic = false, travel is invisible for others,
+    *   If isPublic = false, driver can select voyagers manualy
+    **/
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    private ?bool $isPublic = false;
+
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
@@ -125,7 +118,7 @@ class Travel
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
     #[JoinTable(name: 'travels_voyagers')]
-    #[Groups(['read:travel'])]
+    #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private Collection $voyagers;
 
     public function __construct()
@@ -179,36 +172,6 @@ class Travel
         return $this;
     }
 
-    public function getAdress(): ?string
-    {
-        return $this->adress;
-    }
-    public function setAdress(string $adress): self
-    {
-        $this->adress = $adress;
-        return $this;
-    }
-
-    public function getZipCode(): ?int
-    {
-        return $this->zip_code;
-    }
-    public function setZipCode(int $zip_code): self
-    {
-        $this->zip_code = $zip_code;
-        return $this;
-    }
-
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-    public function setCity(string $city): self
-    {
-        $this->city = $city;
-        return $this;
-    }
-
     public function getDepartureDate(): ?\DateTime
     {
         return $this->departure_date;
@@ -226,6 +189,16 @@ class Travel
     public function setNumberSeats(int $number_seats): self
     {
         $this->number_seats = $number_seats;
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+    public function setIsPublic(bool $isPublic): self
+    {
+        $this->isPublic = $isPublic;
         return $this;
     }
 
