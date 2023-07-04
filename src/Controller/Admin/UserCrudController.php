@@ -3,18 +3,19 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField, IdField, EmailField, TextField};
-use Symfony\Component\Form\Extension\Core\Type\{PasswordType, RepeatedType};
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvents};
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Form\Extension\Core\Type\{PasswordType, RepeatedType};
+use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, KeyValueStore};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField, IdField, EmailField, TextField};
 
 
 class UserCrudController extends AbstractCrudController
@@ -50,55 +51,83 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
-        
-        yield TextField::new('first_name', 'Prénom');
-        yield TextField::new('last_name', 'Nom');
+        yield IdField::new('id')
+                ->hideOnForm();
 
-        yield ChoiceField::new('gender', 'Genre')->setChoices([
-                                                        'Femme' => 'femme',
-                                                        'Homme' => 'homme',
-                                                        'Autre' => 'autre',
-                                                    ]);
-        
+        yield FormField::addPanel('Identité');
+        yield TextField::new('first_name', 'Prénom')
+                ->setColumns(6);
+        yield TextField::new('last_name', 'Nom')
+                ->setColumns(6);
+        yield ChoiceField::new('gender', 'Genre')
+                ->setChoices([
+                    'Femme' => 'femme',
+                    'Homme' => 'homme',
+                    'Autre' => 'autre',
+                ]);
+        yield ArrayField::new('position', 'Position')
+                ->onlyOnForms();
+
+        yield FormField::addPanel('Sécurité');
         yield EmailField::new('email', 'Email');
-
-        // yield TextField::new('password', 'Mot de passe')
-        //                     ->hideOnIndex();
         yield TextField::new('password', 'Mot de passe')
-                            ->setFormType(RepeatedType::class)
-                            ->setFormTypeOptions([
-                                'type' => PasswordType::class,
-                                'first_options' => ['label' => 'Password'],
-                                'second_options' => ['label' => '(Repeat)'],
-                                'mapped' => false,
-                            ])
-                            ->setRequired($pageName === Crud::PAGE_NEW)
-                            ->onlyOnForms()
-                            ;
-
-        yield ChoiceField::new('roles', 'Role')->setChoices([
-                                                    'Administrateur'    => "ROLE_ADMIN",
-                                                    'Editeur'           => "ROLE_EDITOR",
-                                                    'Utilisateur'       => "ROLE_USER"
-                                                ])
-                                                ->allowMultipleChoices();
+                ->setFormType(RepeatedType::class)
+                ->setFormTypeOptions([
+                    'type' => PasswordType::class,
+                    'first_options' => ['label' => 'Password'],
+                    'second_options' => ['label' => 'Confirmation Password'],
+                    'mapped' => false,
+                ])
+                ->setRequired($pageName === Crud::PAGE_NEW)
+                ->onlyOnForms();
+        yield ChoiceField::new('roles', 'Role')
+                ->setChoices([               
+                    'Administrateur'    => "ROLE_ADMIN",
+                    'Editeur'           => "ROLE_EDITOR",
+                    'Utilisateur'       => "ROLE_USER"
+                ])
+                ->allowMultipleChoices();
                                                 
-        yield ArrayField::new('position', 'Position');
+        yield FormField::addPanel('Conducteur');
+        yield BooleanField::new('driver', 'Conducteur')
+                ->renderAsSwitch(true)
+                ->onlyOnForms();
 
-        yield BooleanField::new('driver', 'Conducteur')->renderAsSwitch(true);
         yield TextField::new('car_type', 'Modèle')
-                            ->hideOnIndex();
-        yield TextField::new('car_registration', 'Immatriculation')
-                            ->hideOnIndex();
-        yield IntegerField::new('car_nb_places', 'Nombre de places')
-                            ->hideOnIndex();
+                ->onlyOnForms()
+                ->setColumns(4);
 
-        yield AssociationField::new('travels', 'Voyages')->setCrudController(TravelCrudController::class);
-        yield AssociationField::new('inscriptions', 'Inscriptions')->setCrudController(TravelCrudController::class);
-        yield AssociationField::new('conversations', 'Conversations');
-        yield AssociationField::new('messages', 'Messages');
-        yield AssociationField::new('reports', 'Rapports');
+        yield TextField::new('car_registration', 'Immatriculation')
+                ->onlyOnForms()
+                ->setColumns(4);
+
+        yield IntegerField::new('car_nb_places', 'Nombre de places')
+                ->onlyOnForms()
+                ->setColumns(4);
+
+        yield FormField::addPanel('Données');
+        yield AssociationField::new('travels', 'Voyages')->setCrudController(TravelCrudController::class)
+                ->onlyOnForms()
+                ->setColumns(6)
+                ->setFormTypeOption('disabled', 'disabled');
+        yield AssociationField::new('inscriptions', 'Inscriptions')->setCrudController(TravelCrudController::class)
+                ->onlyOnForms()
+                ->setColumns(6)
+                ->setFormTypeOption('disabled', 'disabled');
+        yield AssociationField::new('conversations', 'Conversations')
+                ->onlyOnForms()
+                ->hideOnForm()
+                ->setColumns(6)
+                ->setFormTypeOption('disabled', 'disabled');
+        yield AssociationField::new('messages', 'Messages')
+                ->hideOnForm()
+                ->setColumns(6)
+                ->setFormTypeOption('disabled', 'disabled');
+        yield AssociationField::new('reports', 'Rapports')
+                ->onlyOnForms()
+                ->hideOnForm()
+                ->setColumns(6)
+                ->setFormTypeOption('disabled', 'disabled');
 
     }
 

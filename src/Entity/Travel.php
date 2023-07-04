@@ -20,6 +20,7 @@ use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -27,23 +28,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
     shortName: 'Travel',
     operations: [
         new GetCollection(
-            uriTemplate: '/travels',
             description: 'Retrieves the collection of Travels',
+            uriTemplate: '/travels',
             normalizationContext: ['groups' => 'read:travels']
         ),
         new Get(
+            description: 'Retrieves one Travel',
             uriTemplate: '/travel/{id}',
             normalizationContext: ['groups' => 'read:travel']
         ),
         new Post(
+            description: 'Creates a new travel',
             uriTemplate: '/travel',
             normalizationContext: ['groups' => 'create:travel']
         ),
         new Patch(
+            description: 'Update an existing Travel',
             uriTemplate: '/travel/{id}',
             normalizationContext: ['groups' => 'update:travel']
         ),
         new Delete(
+            description: 'Delete a travel and cascade delete all it\s voyagers subscriptions',
             uriTemplate: '/travel/{id}',
             normalizationContext: ['groups' => 'delete:travel']
         ),
@@ -52,7 +57,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     paginationEnabled: false,
     description: 'Resources des trajets proposés par nos conducteurs'
 ),
-ApiFilter(TermFilter::class, properties: ['toCesi']),
+ApiFilter(TermFilter::class, properties: ['toCesi, isPublic']),
 ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER)]
 class Travel
 {
@@ -65,7 +70,7 @@ class Travel
     private ?int $id;
 
     #[ORM\Column(length: 250)]
-    #[Groups(['create:travel', 'update:travel'])]
+    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
     private ?string $name;
 
     /**
@@ -96,6 +101,16 @@ class Travel
     #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private ?int $number_seats;
 
+    /**
+    *   If isPublic = true, travel is shared with everyone,
+    *   If isPublic = false, travel is invisible for others,
+    *   If isPublic = false, driver can select voyagers manualy
+    **/
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    #[ApiFilter(BooleanFilter::class)]
+    private ?bool $isPublic = false;
+
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
@@ -104,7 +119,11 @@ class Travel
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
     #[JoinTable(name: 'travels_voyagers')]
-    #[Groups(['read:travel'])]
+    #[Assert\Count(
+        max: 6,
+        maxMessage: 'Vous ne pouvez pas ajouter plus de {{ limit }} voyageurs'
+    )]
+    #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private Collection $voyagers;
 
     public function __construct()
@@ -175,6 +194,16 @@ class Travel
     public function setNumberSeats(int $number_seats): self
     {
         $this->number_seats = $number_seats;
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+    public function setIsPublic(bool $isPublic): self
+    {
+        $this->isPublic = $isPublic;
         return $this;
     }
 
