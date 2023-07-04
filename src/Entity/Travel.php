@@ -118,6 +118,10 @@ class Travel
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
     #[JoinTable(name: 'travels_voyagers')]
+    #[Assert\Count(
+        max: 6,
+        maxMessage: 'Vous ne pouvez pas ajouter plus de {{ limit }} voyageurs'
+    )]
     #[Groups(['read:travel', 'create:travel', 'update:travel'])]
     private Collection $voyagers;
 

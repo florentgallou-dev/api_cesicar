@@ -58,7 +58,7 @@ class TravelCrudController extends AbstractCrudController
         yield BooleanField::new('isPublic', 'Visible publiquement')
                 ->renderAsSwitch(true)
                 ->onlyOnForms();
-        yield AssociationField::new('voyagers')->max(3);
+        yield AssociationField::new('voyagers');
         yield AssociationField::new('user');
     }
 }
