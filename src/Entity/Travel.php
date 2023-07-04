@@ -57,7 +57,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationEnabled: false,
     description: 'Resources des trajets proposés par nos conducteurs'
 ),
-ApiFilter(TermFilter::class, properties: ['toCesi']),
+ApiFilter(TermFilter::class, properties: ['toCesi, isPublic']),
 ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER)]
 class Travel
 {
@@ -108,6 +108,7 @@ class Travel
     **/
     #[ORM\Column(type: 'boolean')]
     #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
+    #[ApiFilter(BooleanFilter::class)]
     private ?bool $isPublic = false;
 
 //Relationships

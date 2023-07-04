@@ -88,7 +88,7 @@ Add this line with your DB parametes :
 
   Also you may want to check if migrations have to be done
   ```bash
-  docker-compose exec php bin/console doctrine:s:u --dump-sql
+  docker-compose exec php bin/console doctrine:s:u --force
   ```
 
   Dont forget to generate your JWT Keys
