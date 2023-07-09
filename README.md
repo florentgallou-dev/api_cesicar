@@ -172,6 +172,29 @@ Add this line with your DB parametes :
   https://jwt.io/#debugger-io
 
   Just copy/paste the api tocken to see result
+
+  ## Use JWT Token to get api/me
+
+  add to the request a Auth Types - Bearer Token : your-jwt-token
+  EX : with Axios
+
+  ``` js
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+
+    const bodyParameters = {
+      headers: { 'accept': 'application/ld+json' }
+    };
+
+    axios.get(`${process.env.API_URL}/me`,
+                  bodyParameters,
+                  config
+                ).then(console.log).catch(console.log);
+  ```
+  ## For help :
+  Postman Tests : https://www.youtube.com/watch?v=SKswJH7_plQ&ab_channel=ValentinDespa
+  StackOverflow : https://stackoverflow.com/questions/40988238/sending-the-bearer-token-with-axios
 </details>
 
 <details>
