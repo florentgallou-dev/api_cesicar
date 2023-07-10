@@ -88,7 +88,7 @@ class Travel
     **/
     #[ORM\Column(type: 'json', nullable: true)]
     #[Groups(['read:travels', 'read:travel', 'create:travel', 'update:travel'])]
-    private ?array $position;
+    private ?array $address;
 
     /**
     *   Datetime telling when travel starts, use it with travel information to calculate traveltime
@@ -135,9 +135,9 @@ class Travel
     public function __toString(): string
     {
         if($this->isToCesi()){
-            return $this->getName().' : '.json_encode($this->getPosition()).' vers CESI';
+            return $this->getName().' vers CESI';
         }else{
-            return $this->getName().' : CESI vers '.json_encode($this->getPosition());
+            return $this->getName().' départ CESI';
         }
     }
 
@@ -166,14 +166,14 @@ class Travel
         return $this;
     }
 
-    public function getPosition(): ?array
+    public function getAddress(): ?array
     {
-        $position[] = $this->position;
-        return $this->position;
+        $address[] = $this->address;
+        return $this->address;
     }
-    public function setPosition(array $position): self
+    public function setAddress(array $address): self
     {
-        $this->position = $position;
+        $this->address = $address;
         return $this;
     }
 

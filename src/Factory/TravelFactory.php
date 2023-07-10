@@ -9,6 +9,7 @@ use Zenstruck\Foundry\ModelFactory;
 use App\Repository\TravelRepository;
 use App\Repository\UserRepository;
 use Zenstruck\Foundry\RepositoryProxy;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @extends ModelFactory<Travel>
@@ -31,13 +32,16 @@ use Zenstruck\Foundry\RepositoryProxy;
  */
 final class TravelFactory extends ModelFactory
 {
+    private $client;
+
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
      *
      * @todo inject services if required
      */
-    public function __construct(private UserRepository $users)
+    public function __construct(private UserRepository $users, HttpClientInterface $client)
     {
+        $this->client = $client;
         parent::__construct();
     }
 
@@ -48,14 +52,54 @@ final class TravelFactory extends ModelFactory
      */
     protected function getDefaults(): array
     {
+                
         $faker = Faker\Factory::create('fr_FR');
+
+        $stringToQuery = [
+            "77 Rue du Général Leclerc, 76000 Rouen",
+            "1 Imp. Massard, 76100 Rouen",
+            "10 Rue Saint-Laurent, 27700 Heuqueville",
+            "516 Rue Jean Jaurès, 76770 Houppeville",
+            "5-3 Rue de Lanarck, 76190 Yvetot",
+            "97 Pl. Micheline Ostermeyer, 76970 Grémonville",
+            "161 Rue de la Pierre aux Pages, 76410 Cleon",
+            "1 All. du Chat Rouge, 76410 Tourville-la-Rivière",
+            "18 Rue des Vingt Acres, 27370 La Saussaye",
+            "7 Chem. des Bargues, 27370 Le Thuit-de-l'Oison",
+            "75 Rte de Quillebeuf, 27680 Trouville-la-Haule",
+            "102 Rue des frères Jussieu, 76230 Isneauville",
+            "4 Rte de Montville, 76770 Malaunay",
+            "9 Sent. des Jumelles, 76710 Montville",
+            "30 Rte de Louviers, 27930 Le Boulay-Morin",
+            "2 rue de la roche, 27100 Val-de-Reuil"
+        ];
+
+        $query = $this->getAddressData($faker->randomElement($stringToQuery));
+
+        $address = [
+            "label"         => $query['features'][0]['properties']['label'],
+            // "score"         => $query['features'][0]['properties']['score'],
+            "housenumber"   => $query['features'][0]['properties']['housenumber'],
+            "id"            => $query['features'][0]['properties']['id'],
+            "name"          => $query['features'][0]['properties']['name'],
+            "postcode"      => $query['features'][0]['properties']['postcode'],
+            "citycode"      => $query['features'][0]['properties']['citycode'],
+            "x"             => $query['features'][0]['properties']['x'],
+            "y"             => $query['features'][0]['properties']['y'],
+            "city"          => $query['features'][0]['properties']['city'],
+            "context"       => $query['features'][0]['properties']['context'],
+            // "type"          => $query['features'][0]['properties']['type'],
+            // "importance"    => $query['features'][0]['properties']['importance'],
+            "street"        => $query['features'][0]['properties']['street']
+        ];
+
         $drivers = $this->users->findDrivers();
 
         return [
             'name' => $faker->text(50),
             'toCesi' => $faker->boolean(),
             // 'position' => $faker->randomElement($geolocalisations),
-            'position' => [$faker->latitude(49.324733, 49.496122), $faker->longitude(0.982762, 1.295804)],
+            'address' => $address,
             'departure_date' => $faker->dateTimeBetween('now', '+90 days'),
             'number_seats' => $faker->randomElement($array = [1, 2, 3, 4, 5, 6]),
             'user' => $faker->randomElement($drivers),
@@ -75,5 +119,15 @@ final class TravelFactory extends ModelFactory
     protected static function getClass(): string
     {
         return Travel::class;
+    }
+
+    public function getAddressData(string $address): array
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://api-adresse.data.gouv.fr/search/?q='.$address
+        );
+
+        return $response->toArray();
     }
 }
