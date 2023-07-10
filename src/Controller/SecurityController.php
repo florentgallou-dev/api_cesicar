@@ -14,4 +14,11 @@ class SecurityController extends AbstractController
         throw new Exception('Erreur d\'authentification utilisez le JWT Handler');
     }
 
+    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
+    public function register(): void
+    {
+        dd('michel');
+        throw new Exception('Erreur d\'authentification utilisez le JWT Handler');
+    }
+
 }

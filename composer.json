@@ -23,6 +23,7 @@
         "symfony/expression-language": "6.2.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.2.*",
+        "symfony/http-client": "6.2.*",
         "symfony/mailer": "6.2.*",
         "symfony/maker-bundle": "^1.48",
         "symfony/monolog-bundle": "^3.0",
