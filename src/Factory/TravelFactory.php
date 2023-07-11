@@ -75,21 +75,18 @@ final class TravelFactory extends ModelFactory
         ];
 
         $query = $this->getAddressData($faker->randomElement($stringToQuery));
+        $orderCoordonates = [$query['features'][0]['geometry']['coordinates'][1], $query['features'][0]['geometry']['coordinates'][0]];
 
         $address = [
             "label"         => $query['features'][0]['properties']['label'],
-            // "score"         => $query['features'][0]['properties']['score'],
             "housenumber"   => $query['features'][0]['properties']['housenumber'],
             "id"            => $query['features'][0]['properties']['id'],
             "name"          => $query['features'][0]['properties']['name'],
             "postcode"      => $query['features'][0]['properties']['postcode'],
             "citycode"      => $query['features'][0]['properties']['citycode'],
-            "x"             => $query['features'][0]['properties']['x'],
-            "y"             => $query['features'][0]['properties']['y'],
+            "position"      => $orderCoordonates,
             "city"          => $query['features'][0]['properties']['city'],
             "context"       => $query['features'][0]['properties']['context'],
-            // "type"          => $query['features'][0]['properties']['type'],
-            // "importance"    => $query['features'][0]['properties']['importance'],
             "street"        => $query['features'][0]['properties']['street']
         ];
 
