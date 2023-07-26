@@ -6,17 +6,19 @@ use App\Entity\Report;
 use App\Entity\Travel;
 use App\Entity\Message;
 use App\Entity\Conversation;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use App\Controller\RegistrationController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -40,13 +42,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
                 security: 'is_granted("ROLE_USER")'
         ),
         new Patch(
-            description: 'Get the actualy connected User',
+            description: 'Update the actualy connected User',
             uriTemplate: '/me',
-            controller: MeController::class,
-            normalizationContext: ['groups' => 'read:user'],
-            paginationEnabled: false,
-            read: true,
-            openapiContext: ['cookiesAuth' => []],
+            routeName: 'patch_user',
             security: 'is_granted("ROLE_USER")'
         ),
     ],
@@ -64,30 +62,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:user', 'create:travel'])]
     private ?int $id;
 
-    #[ORM\Column(length: 150)]
-    #[Assert\NotBlank(message: "Votre prénom est nécessaire à votre enregistrement.")]
+    #[ORM\Column(length: 150, nullable: true)]
     #[Assert\Length(
             min: 3,
-            max: 150
+            max: 150,
+            minMessage: 'Votre prénom doit comporter au minimum 3 caractères.',
+            maxMessage: 'Votre prénom ne peux dépasser 150 caractères.'
     )]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'patch:user'])]
     private string $first_name;
 
-    #[ORM\Column(length: 150)]
-    #[Assert\NotBlank]
+    #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Length(
             min: 3,
-            max: 50,
+            max: 150,
             minMessage: 'Votre nom doit comporter au minimum 3 caractères.',
-            maxMessage: 'Votre nom ne peux dépasser 50 caractères.'
+            maxMessage: 'Votre nom ne peux dépasser 150 caractères.'
     )]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'patch:user'])]
     private string $last_name;
 
-    #[ORM\Column(length: 5)]
-    #[Assert\NotBlank(message: "Votre genre est nécessaire à votre enregistrement.")]
+    #[ORM\Column(length: 5, nullable: true)]
     #[Assert\Choice(callback: 'getGenders')]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'patch:user'])]
     private ?string $gender;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -106,11 +103,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?array $roles = [];
 
     #[ORM\Column(type: 'json', nullable: true)]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'patch:user'])]
     private ?array $position = null;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'patch:user'])]
     private ?bool $driver = false;
 
     #[ORM\Column(length: 150, nullable: true)]
@@ -120,7 +117,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Le type de votre véhicule est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user', 'read:travel'])]
+    #[Groups(['read:user', 'patch:user', 'read:travel'])]
     private ?string $car_type = null;
 
     #[ORM\Column(length: 15, nullable: true)]
@@ -130,7 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Votre plaque d'imatriculation est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user', 'read:travel'])]
+    #[Groups(['read:user', 'patch:user', 'read:travel'])]
     private ?string $car_registration = null;
 
     #[ORM\Column(nullable: true)]
@@ -140,7 +137,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Le nombre de places disponible dans votre véhicule est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user'])]
+    #[Groups(['read:user', 'patch:user'])]
     private ?int $car_nb_places = null;
 
     #[ORM\Column(nullable: true)]
