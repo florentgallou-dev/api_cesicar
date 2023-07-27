@@ -17,7 +17,18 @@ class AppFixtures extends Fixture
             $user1->setEmail('florent.gallou@viacesi.fr');
             $user1->setPassword('$2y$13$QcJ1Bp6IvjHgVphvcJSbl.OVRf32mTDpKhXlc4S/E1hEBdGFx1FSa');
             $user1->setRoles(array('ROLE_SUPERADMIN'));
-            $user1->setPosition([49.794536, 1.023416]);
+            $user1->setAddress([
+                "label" => "10 Rue Saint Laurent 27700 Heuqueville",
+                "housenumber" => "10",
+                "id" => "27337_0082_00010",
+                "name" => "10 Rue Saint Laurent",
+                "postcode" => "27700",
+                "citycode" => "27337",
+                "position" => [49.286074,1.343469],
+                "city" => "Heuqueville",
+                "context" => "27, Eure, Normandie",
+                "street" => "Rue Saint Laurent"
+            ]);
             $user1->setDriver(1);
             $user1->setCarType('Ford Fiesta');
             $user1->setCarRegistration('DG-519-GG');

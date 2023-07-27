@@ -44,7 +44,7 @@ class MeController
         $user->setFirstName($datas['first_name']);
         $user->setLastName($datas['last_name']);
         $user->setGender($datas['gender']);
-        $user->setPosition(json_decode($datas['position'], true));
+        $user->setAddress(json_decode($datas['position'], true));
         $user->setDriver($datas['driver']);
         $user->setCarType($datas['car_type']);
         $user->setCarRegistration($datas['car_registration']);
