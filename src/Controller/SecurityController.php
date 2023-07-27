@@ -31,28 +31,28 @@ class SecurityController extends AbstractController
         $datas = json_decode($request->getContent(), true);
 
         //check if user already exist
-        if($userRepository->findOneBy(['email' => $datas['user']])) {
+        if($userRepository->findOneBy(['email' => $datas['email']])) {
             return new JsonResponse([
                 'error' => 'Cet email est déjà utilisé'
             ], 409);
         }
-        elseif(!preg_match($EMAIL_REGEX, $datas['user'])) {
+        elseif(!preg_match($EMAIL_REGEX, $datas['email'])) {
             return new JsonResponse([
                 'error' => 'Votre email n\'est pas valide'
             ], 410);
         }
-        elseif(!preg_match($PWD_REGEX, $datas['pwd'])) {
+        elseif(!preg_match($PWD_REGEX, $datas['password'])) {
             return new JsonResponse([
                 'error' => 'Votre mot de passe n\'est pas assez sécurité'
             ], 411);
         }else {
 
             $user = new User();
-            $user->setEmail($datas['user']);
+            $user->setEmail($datas['email']);
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
-                    $datas['pwd']
+                    $datas['password']
                 )
             );
 

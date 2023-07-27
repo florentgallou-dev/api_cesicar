@@ -10,6 +10,7 @@ use App\Repository\TravelRepository;
 use App\Repository\UserRepository;
 use Zenstruck\Foundry\RepositoryProxy;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Faker\Factory;
 
 /**
  * @extends ModelFactory<Travel>

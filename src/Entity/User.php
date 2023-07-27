@@ -6,7 +6,6 @@ use App\Entity\Report;
 use App\Entity\Travel;
 use App\Entity\Message;
 use App\Entity\Conversation;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
@@ -18,7 +17,6 @@ use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
-use App\Controller\RegistrationController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -27,25 +25,22 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
-// #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     security: 'is_granted("ROLE_USER")',
     operations: [
         new GetCollection(
                 description: 'Get the actualy connected User',
+                paginationEnabled: false,
                 uriTemplate: '/me',
                 controller: MeController::class,
-                normalizationContext: ['groups' => 'read:user'],
-                paginationEnabled: false,
                 read: true,
-                openapiContext: ['cookiesAuth' => []],
-                security: 'is_granted("ROLE_USER")'
+                openapiContext: ['security' => ['bearerAuth' => []]]
         ),
         new Patch(
             description: 'Update the actualy connected User',
             uriTemplate: '/me',
             routeName: 'patch_user',
-            security: 'is_granted("ROLE_USER")'
+            openapiContext: ['security' => ['bearerAuth' => []]]
         ),
     ],
     order: ['id' => 'ASC'],
@@ -59,32 +54,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:user', 'create:travel'])]
+    #[Groups(['create:travel'])]
     private ?int $id;
 
-    #[ORM\Column(length: 150, nullable: true)]
+    #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Length(
             min: 3,
-            max: 150,
+            max: 50,
             minMessage: 'Votre prénom doit comporter au minimum 3 caractères.',
-            maxMessage: 'Votre prénom ne peux dépasser 150 caractères.'
+            maxMessage: 'Votre prénom ne peux dépasser 50 caractères.'
     )]
-    #[Groups(['read:user', 'patch:user'])]
     private string $first_name;
 
     #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Length(
             min: 3,
-            max: 150,
+            max: 50,
             minMessage: 'Votre nom doit comporter au minimum 3 caractères.',
-            maxMessage: 'Votre nom ne peux dépasser 150 caractères.'
+            maxMessage: 'Votre nom ne peux dépasser 50 caractères.'
     )]
-    #[Groups(['read:user', 'patch:user'])]
     private string $last_name;
 
     #[ORM\Column(length: 5, nullable: true)]
     #[Assert\Choice(callback: 'getGenders')]
-    #[Groups(['read:user', 'patch:user'])]
     private ?string $gender;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -103,21 +95,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?array $roles = [];
 
     #[ORM\Column(type: 'json', nullable: true)]
-    #[Groups(['read:user', 'patch:user'])]
-    private ?array $position = null;
+    private ?array $address = null;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['read:user', 'patch:user'])]
     private ?bool $driver = false;
 
-    #[ORM\Column(length: 150, nullable: true)]
+    #[ORM\Column(length: 50, nullable: true)]
     #[Assert\When(
         expression: 'this.getDriver() == true',
         constraints: [
             new Assert\NotBlank(message: "Le type de votre véhicule est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user', 'patch:user', 'read:travel'])]
+    #[Groups(['read:travel'])]
     private ?string $car_type = null;
 
     #[ORM\Column(length: 15, nullable: true)]
@@ -127,7 +117,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Votre plaque d'imatriculation est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user', 'patch:user', 'read:travel'])]
+    #[Assert\Regex(
+        pattern: '/^[A-Z]{2}[-][0-9]{3}[-][A-Z]/',
+        match: false,
+        message: 'Votre immatriculation doit respecter le format AB-123-CD'
+    )]
+    #[Groups(['read:travel'])]
     private ?string $car_registration = null;
 
     #[ORM\Column(nullable: true)]
@@ -137,7 +132,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Le nombre de places disponible dans votre véhicule est nécessaire si vous êtres un conducteur.")
         ],
     )]
-    #[Groups(['read:user', 'patch:user'])]
     private ?int $car_nb_places = null;
 
     #[ORM\Column(nullable: true)]
@@ -278,14 +272,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getPosition(): ?array
+    public function getAddress(): ?array
     {
-        $position[] = $this->position;
-        return $this->position;
+        $address[] = $this->address;
+        return $this->address;
     }
-    public function setPosition(array $position): self
+    public function setAddress(array $address): self
     {
-        $this->position = $position;
+        $this->address = $address;
         return $this;
     }
 

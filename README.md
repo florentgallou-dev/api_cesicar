@@ -11,18 +11,18 @@ It also provides a great help il focusin on api helpers and understanding of dat
 | `MariaDB` | `15.1` | |
 
 <details>
-  <summary>INSTALLATION</summary>
+  <summary>DOCKER - INSTALLATION</summary>
 
   ## 1/ Clone project
   ```bash
     git clone repositoryName
   ```
 
- ## 2/ Create .env
+  ## 2/ Create .env
   ```bash
   Create file .env.local in your root folder
   ```
-Add this line with your DB parametes :
+  Add this line with your DB parametes :
   ```bash
     DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"
   ```
@@ -74,7 +74,7 @@ Add this line with your DB parametes :
 </details>
 
 <details>
-  <summary>UPDATES / PULL</summary>
+  <summary>DOCKER - UPDATES / PULL</summary>
 
   Each time you update the 'develop' project by :
   ```bash
@@ -97,54 +97,191 @@ Add this line with your DB parametes :
   ```
 </details>
 
+<details>
+  <summary>NO-DOCKER - INSTALLATION</summary>
+
+  ### 1/ Clone project
+  ```bash
+    git clone repositoryName
+  ```
+
+  -> Then go in the project folder
+
+  ### 2/ Create .env
+  ```bash
+  Create file .env.local in your root folder
+  ```
+  Add this line with your DB parametes :
+  ```bash
+    DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"
+  ```
+
+  ### 3/ Composer libraries
+  ```bash
+    composer install
+  ```
+
+  ### 4/ Npm libraries
+  ```bash
+    npm install
+  ```
+
+  ### 5/ Create DataBase
+  ```bash
+    php bin/console doctrine:database:create
+  ```
+
+  ### 6/ Migrate database
+  ```bash
+    php bin/console doctrine:s:u --force
+  ```
+
+  ### 7/ Seed database
+  ```bash
+    php bin/console doctrine:fixtures:load
+  ```
+  ### 8/ Start server
+  ```bash
+    symfony server:start
+    ou
+    php bin/console server:start
+  ```
+
+  ### 9/ Generate JWT keys
+  ```bash
+    php bin/console lexik:jwt:generate-keypair
+  ```
+
+  ### link of the projet locally
+  - BO - http://localhost:8000/admin
+  - api - http://localhost:8080/api
+
+  ### HELP/ Hash your first password
+  ```bash
+  php bin/console security:hash-password
+  ```
+</details>
+
+<details>
+  <summary>NO-DOCKER - UPDATES / PULL</summary>
+
+  ### 0/ In project folder, before anything check witch branch your on
+  ```bash
+    git status
+  ```
+  ### 1/ Go to develop branch
+  ```bash
+    git checkout develop
+  ```
+  ### 2/ Fetch differences - read report
+  ```bash
+    git fetch
+  ```
+
+  ### 3/ Pull updates - read report
+  ```bash
+    git pull
+  ```
+
+  ### 4/ If needed update libraries
+  ```bash
+    composer install && npm install
+  ```
+
+  ### 5/ Delete the whole database and recreate it
+  ```bash
+    php bin/console doctrine:database:create
+  ```
+
+  ### 6/ Migrate database
+  ```bash
+    php bin/console doctrine:s:u --force
+  ```
+
+  ### 7/ Seed database
+  ```bash
+    php bin/console doctrine:fixtures:load
+  ```
+</details>
 
 <details>
   <summary>ROUTES</summary>
 
-  ## Access BackOffice
+  ### Access BackOffice
   127.0.0.1:8000/admin
 
   connect with your credentials or this admin :
     login : florent.gallou@viacesi.fr
     password : password
 
-  ## Access api
+  ### Access api
   127.0.0.1:8000/api
   -> help : https://symfonycasts.com/screencast/api-platform/json-ld
 
-  ## Access api using helper
+  ### Access api using helper
   127.0.0.1:8000/_profiler
   -> help : https://symfonycasts.com/screencast/api-platform/profiler
 
-  ## Access api login
-  127.0.0.1:8000/api/login
+  ### Access api register
+  BO Controller : src/Controller/SecurityControlle/register()
+  127.0.0.1:8000/api/register
+  send parameters
+    -> email
+    -> password
 
-  ## Access api login
+  ### Access api login
+  BO Controller : src/Controller/SecurityControlle/login() automatic JWT generator
+  127.0.0.1:8000/api/login
+  send parameters
+    -> username
+    -> password
+
+  ### Access api connected user
+  127.0.0.1:8000/api/me
+    -> get    - read
+    -> patch  - update
+
+  ### Access api login
   127.0.0.1:8000/api/logout
 
   ### Api get all Travels
   127.0.0.1:8000/api/travels
   ```bash
-
   [
     {
-      "id": 0,
-      "toCesi": true,
-      "position": [
-        "string"
-      ],
-      "departure_date": "2023-04-27T23:00:09.018Z",
-      "user": {
-        "name": "string"
-      }
-    }
+			"@id": "\/api\/travel\/21",
+			"@type": "Travel",
+			"id": 21,
+			"toCesi": true,
+			"address": {
+				"label": "10 Rue Saint Laurent 27700 Heuqueville",
+				"housenumber": "10",
+				"id": "27337_0082_00010",
+				"name": "10 Rue Saint Laurent",
+				"postcode": "27700",
+				"citycode": "27337",
+				"position": [
+					49.286074,
+					1.343469
+				],
+				"city": "Heuqueville",
+				"context": "27, Eure, Normandie",
+				"street": "Rue Saint Laurent"
+			},
+			"departure_date": "2023-10-22T03:13:00+02:00",
+			"user": {
+				"@id": "\/api\/users\/28",
+				"@type": "User",
+				"name": "Florent Gallou"
+			}
+		},
   ]
   ```
   - toCesi (boulean) :
     - true = travel TO CESI
     - false = travel FROM CESI
 
-  - position (json array [number, number]) :
+  - position (json array [geo api values]) :
     - if toCesi = true -> position = position from where you start to go to CESI
     - if toCesi = false -> position = position where you go when leaving CESI
 
@@ -162,16 +299,16 @@ Add this line with your DB parametes :
   If you log correctly with : 
   127.0.0.1:8000/api/login
 
-  You'll get a Tocken like this :
+  You'll get a Token like this :
   ```bash
   {
     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2ODMxMTc4NTIsImV4cCI6MTY4MzEyMTQ1Miwicm9sZXMiOlsiUk9MRV9TVVBFUkFETUlOIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZmxvcmVudC5nYWxsb3VAdmlhY2VzaS5mciJ9.GlrP61Tv_qI3gI3MKEOuLT9QoFob-Iu8lp2MwlCvQ9RiTLFFvVhCaq8ZvnFspgp-wrmrFc6VBfOsZ3_p8EgS6JLLL367QobCLRVWkdskMRpreaE0Fqwdu84P2xQX9ArCnxJbpbffE6ISIDV7T_t1K3pGwMzC4dcCRAVJMr2LtRgR0uV70-OT4dbqI_RnEYxN7rnAdYtKNblVZ54dFbjs4SveBXJD89WJ-IVbyM-rGwR25sHZkfirFGxbROuvI8oZy8JBt738kQbJCRq4bgdzEPVCpN_UpNiWJdlKdJPvoo8-M78NjYGE04x2si3Ms3HT5hDtzk7VoMFo3JouPAQibA"
   }
   ```
-  You can decode this tocken here :
+  You can decode this token here :
   https://jwt.io/#debugger-io
 
-  Just copy/paste the api tocken to see result
+  Just copy/paste the api token to see result
 
   ## Use JWT Token to get api/me
 
@@ -179,17 +316,15 @@ Add this line with your DB parametes :
   EX : with Axios
 
   ``` js
-    const config = {
-      headers: { Authorization: `Bearer ${token}` }
-    };
-
-    const bodyParameters = {
-      headers: { 'accept': 'application/ld+json' }
+    const headerDatas = {
+      headers: {
+        'Content-Type': 'application/ld+json',
+        'Authorization': `Bearer ${token}`
+      }
     };
 
     axios.get(`${process.env.API_URL}/me`,
-                  bodyParameters,
-                  config
+                  headerDatas
                 ).then(console.log).catch(console.log);
   ```
   ## For help :
