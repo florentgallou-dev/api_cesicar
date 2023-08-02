@@ -154,7 +154,7 @@ It also provides a great help il focusin on api helpers and understanding of dat
 
   ### link of the projet locally
   - BO - http://localhost:8000/admin
-  - api - http://localhost:8080/api
+  - api - http://localhost:8000/api
 
   ### HELP/ Hash your first password
   ```bash
