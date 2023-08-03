@@ -34,8 +34,8 @@ class MeController
     {
         $REGISTRATION_REGEX = '/^[A-Z]{2}[-][0-9]{3}[-][A-Z]/';
         $datas = json_decode($request->getContent(), true);
-
-        if(!preg_match($REGISTRATION_REGEX, $datas['car_registration'])) {
+        
+        if($datas['driver'] && !preg_match($REGISTRATION_REGEX, $datas['car_registration'])) {
             return new JsonResponse([
                 'error' => 'Votre immatriculation n\'est pas valide'
             ], 410);
@@ -46,9 +46,10 @@ class MeController
         $user->setGender($datas['gender']);
         $user->setAddress(json_decode($datas['position'], true));
         $user->setDriver($datas['driver']);
-        $user->setCarType($datas['car_type']);
-        $user->setCarRegistration($datas['car_registration']);
-        $user->setCarNbPlaces($datas['car_nb_places']);
+        
+        $user->setCarType(!empty($datas['car_type']) ? $datas['car_type'] : null );
+        $user->setCarRegistration(!empty($datas['car_registration']) ? $datas['car_registration'] : null );
+        $user->setCarNbPlaces(!empty($datas['car_nb_places']) ? $datas['car_nb_places'] : null );
         
         $entityManager->persist($user);
         $entityManager->flush();
