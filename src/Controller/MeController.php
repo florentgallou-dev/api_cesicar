@@ -41,15 +41,21 @@ class MeController
             ], 410);
         }
 
+        //If typeof address === string it is json from the geolocalization query, if not it's an array from old user value
+        if(gettype($datas['address']) === 'string'){
+            $address = json_decode($datas['address'], true);
+        }else{
+            $address = $datas['address'];
+        }
+
         $user->setFirstName($datas['first_name']);
         $user->setLastName($datas['last_name']);
         $user->setGender($datas['gender']);
-        $user->setAddress(json_decode($datas['position'], true));
+        $user->setAddress($address);
         $user->setDriver($datas['driver']);
-        
-        $user->setCarType(!empty($datas['car_type']) ? $datas['car_type'] : null );
-        $user->setCarRegistration(!empty($datas['car_registration']) ? $datas['car_registration'] : null );
-        $user->setCarNbPlaces(!empty($datas['car_nb_places']) ? $datas['car_nb_places'] : null );
+        $user->setCarType($datas['driver'] ? $datas['car_type'] : null );
+        $user->setCarRegistration($datas['driver'] ? $datas['car_registration'] : null );
+        $user->setCarNbPlaces($datas['driver'] ? $datas['car_nb_places'] : null );
         
         $entityManager->persist($user);
         $entityManager->flush();
