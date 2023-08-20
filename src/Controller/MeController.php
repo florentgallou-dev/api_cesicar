@@ -17,16 +17,11 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 class MeController
 {
     public function __construct(private Security $security)
-    {
-        
-    }
+    {}
 
-    public function __invoke()
+    public function __invoke(): ?User
     {
-        if(!$user = $this->security->getUser()){
-            throw new UnauthorizedHttpException('OAuth', 'Erreur d\'authentification');
-        }
-        return $user;
+        return $this->security->getUser();
     }
 
     #[Route('/api/me', name: 'patch_user', methods: ['PATCH'])]

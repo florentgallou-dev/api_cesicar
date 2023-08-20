@@ -6,6 +6,8 @@ use App\Entity\Report;
 use App\Entity\Travel;
 use App\Entity\Message;
 use App\Entity\Conversation;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\OpenApi\Model;
 use ApiPlatform\Metadata\Patch;
 use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
@@ -28,19 +30,29 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ApiResource(
     security: 'is_granted("ROLE_USER")',
     operations: [
-        new GetCollection(
-                description: 'Get the actualy connected User',
-                paginationEnabled: false,
-                uriTemplate: '/me',
-                controller: MeController::class,
-                read: true,
-                openapiContext: ['security' => ['bearerAuth' => []]]
+        new Get(
+            description: 'Récupérer l\'utilisateur connecté',
+            uriTemplate: '/me',
+            normalizationContext: ['groups' => ['read:User']],
+            controller: MeController::class,
+            paginationEnabled: false,
+            read: false,
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Récupérer l\'utilisateur connecté',
+                                            security: [['bearerAuth' => []]] //for JWT token
+                                        )
         ),
         new Patch(
-            description: 'Update the actualy connected User',
+            description: 'Mettre à jour l\'utilisateur connecté',
             uriTemplate: '/me',
+            controller: MeController::class,
             routeName: 'patch_user',
-            openapiContext: ['security' => ['bearerAuth' => []]]
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Récupérer l\'utilisateur connecté',
+                                            security: [['bearerAuth' => []]] //for JWT token
+                                        )
         ),
     ],
     order: ['id' => 'ASC'],
@@ -54,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['create:travel'])]
+    #[Groups(['read:User', 'create:travel'])]
     private ?int $id;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -64,6 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             minMessage: 'Votre prénom doit comporter au minimum 3 caractères.',
             maxMessage: 'Votre prénom ne peux dépasser 50 caractères.'
     )]
+    #[Groups(['read:User'])]
     private string $first_name;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -73,15 +86,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             minMessage: 'Votre nom doit comporter au minimum 3 caractères.',
             maxMessage: 'Votre nom ne peux dépasser 50 caractères.'
     )]
+    #[Groups(['read:User'])]
     private string $last_name;
 
     #[ORM\Column(length: 5, nullable: true)]
     #[Assert\Choice(callback: 'getGenders')]
+    #[Groups(['read:User'])]
     private ?string $gender;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank(message: "Votre email est indispensable pour vous identifier.")]
-    #[Groups(['read:user'])]
+    #[Groups(['read:User'])]
     private ?string $email;
     
     /**
@@ -95,9 +110,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?array $roles = [];
 
     #[ORM\Column(type: 'json', nullable: true)]
+    #[Groups(['read:User'])]
     private ?array $address = null;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(['read:User'])]
     private ?bool $driver = false;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -122,7 +139,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         match: false,
         message: 'Votre immatriculation doit respecter le format AB-123-CD'
     )]
-    #[Groups(['read:travel'])]
+    #[Groups(['read:User', 'read:travel'])]
     private ?string $car_registration = null;
 
     #[ORM\Column(nullable: true)]
@@ -132,6 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Assert\NotBlank(message: "Le nombre de places disponible dans votre véhicule est nécessaire si vous êtres un conducteur.")
         ],
     )]
+    #[Groups(['read:User'])]
     private ?int $car_nb_places = null;
 
     #[ORM\Column(nullable: true)]
@@ -142,15 +160,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 // Relationships
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Travel::class)]
+    #[Groups(['read:User'])]
     private ?Collection $travels = null;
 
     #[ORM\ManyToMany(targetEntity: Travel::class, mappedBy: 'voyagers')]
+    #[Groups(['read:User'])]
     private ?Collection $inscriptions = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Conversation::class)]
+    #[Groups(['read:User'])]
     private ?Collection $conversations = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
+    #[Groups(['read:User'])]
     private ?Collection $messages = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Report::class)]
@@ -171,6 +193,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->getFirstName().' '.$this->getLastName();
     }
 
+    #[Groups(['read:travels'])]
+    public function getPublicName(): ?string
+    {
+        return $this->first_name.'.'.strtoupper(substr($this->last_name, 0,1));
+    }
+    
     #[Groups(['read:travels', 'read:travel'])]
     public function getName(): ?string
     {

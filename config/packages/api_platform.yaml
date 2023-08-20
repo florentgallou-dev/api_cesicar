@@ -1,8 +1,0 @@
-api_platform:
-  title: 'CESI CAR API'
-  description: 'API de notre application de covoiturage CESICAR.'
-  version: '0.6.0'
-
-when@prod:
-  api_platform:
-    enable_swagger_ui: false

@@ -66,11 +66,11 @@ class Travel
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:travels', 'read:travel'])]
+    #[Groups(['read:travels', 'read:travel', 'read:User'])]
     private ?int $id;
 
     #[ORM\Column(length: 250)]
-    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
+    #[Groups(['create:travel', 'read:travel', 'update:travel', 'read:User'])]
     private ?string $name;
 
     /**

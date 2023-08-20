@@ -3,6 +3,6 @@
 npm install
 npm run build
 composer install
-php bin/console doctrine:s:u --force --complete
-php bin/console doctrine:m:m --allow-no-migration
-php bin/console doctrine:fixtures:load
+php bin/console doctrine:s:u --force
+php bin/console doctrine:fixtures:load -yes
+php bin/console lexik:jwt:generate-keypair
