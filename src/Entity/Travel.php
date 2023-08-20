@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\OpenApi\Model;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -35,22 +36,36 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             description: 'Retrieves one Travel',
             uriTemplate: '/travel/{id}',
-            normalizationContext: ['groups' => 'read:travel']
+            normalizationContext: ['groups' => 'read:travel'],
         ),
         new Post(
             description: 'Creates a new travel',
             uriTemplate: '/travel',
-            normalizationContext: ['groups' => 'create:travel']
+            denormalizationContext: ['groups' => 'create:travel'],
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Créer un nouveau voyage',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
         new Patch(
             description: 'Update an existing Travel',
             uriTemplate: '/travel/{id}',
-            normalizationContext: ['groups' => 'update:travel']
+            denormalizationContext: ['groups' => 'update:travel'],
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Mettre à jour un voyage',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
         new Delete(
             description: 'Delete a travel and cascade delete all it\s voyagers subscriptions',
             uriTemplate: '/travel/{id}',
-            normalizationContext: ['groups' => 'delete:travel']
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Supprimer un voyage',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
     ],
     order: ['id' => 'ASC'],
