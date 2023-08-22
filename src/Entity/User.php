@@ -18,6 +18,7 @@ use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -65,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:User', 'create:travel'])]
+    #[Groups(['read:User', 'create:travel', 'read:consersations'])]
     private ?int $id;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -198,7 +199,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->first_name.'.'.strtoupper(substr($this->last_name, 0,1));
     }
     
-    #[Groups(['read:travels', 'read:travel'])]
+    #[Groups(['read:travels', 'read:travel', 'read:consersations'])]
     public function getName(): ?string
     {
         return $this->first_name.' '.$this->last_name;

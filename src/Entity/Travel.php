@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\User;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use App\Entity\Trait\Timestamps;
@@ -18,10 +19,10 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\OpenApi\Model;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -73,7 +74,8 @@ use ApiPlatform\OpenApi\Model;
     description: 'Resources des trajets proposés par nos conducteurs'
 ),
 ApiFilter(TermFilter::class, properties: ['toCesi, isPublic']),
-ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER)]
+ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER),
+ApiFilter(SearchFilter::class, properties: ['address' => 'partial'])]
 class Travel
 {
     use Timestamps;
