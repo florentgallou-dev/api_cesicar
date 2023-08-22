@@ -3,13 +3,34 @@
 namespace App\Entity;
 
 use App\Entity\User;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model;
 use Doctrine\DBAL\Types\Types;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReportRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    shortName: 'Report',
+    operations: [
+        new GetCollection(),
+        new Post(
+            description: 'Créer un rapport',
+            uriTemplate: '/report',
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Créer un nouveau rapport',
+                                            security: [['bearerAuth' => []]]
+                                        )
+        )
+    ],
+    paginationEnabled: false,
+    description: 'Resources des rapports sur les contenus du site'
+)]
 class Report
 {
 

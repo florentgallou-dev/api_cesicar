@@ -76,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             maxMessage: 'Votre prénom ne peux dépasser 50 caractères.'
     )]
     #[Groups(['read:User'])]
-    private string $first_name;
+    private ?string $first_name = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Length(
@@ -86,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             maxMessage: 'Votre nom ne peux dépasser 50 caractères.'
     )]
     #[Groups(['read:User'])]
-    private string $last_name;
+    private ?string $last_name = null;
 
     #[ORM\Column(length: 5, nullable: true)]
     #[Assert\Choice(callback: 'getGenders')]
