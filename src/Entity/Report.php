@@ -17,7 +17,6 @@ use ApiPlatform\Metadata\GetCollection;
 #[ApiResource(
     shortName: 'Report',
     operations: [
-        new GetCollection(),
         new Post(
             description: 'Créer un rapport',
             uriTemplate: '/report',

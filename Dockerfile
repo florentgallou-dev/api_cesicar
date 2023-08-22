@@ -36,5 +36,9 @@ RUN docker-php-ext-configure \
   &&  pecl install apcu && docker-php-ext-enable apcu
 
 COPY . /var/www/
-
 WORKDIR /var/www/
+
+RUN composer install
+RUN npm install
+RUN npm run build
+

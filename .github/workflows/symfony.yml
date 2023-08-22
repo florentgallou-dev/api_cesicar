@@ -2,7 +2,6 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-
 name: Symfony
 
 on:
@@ -16,7 +15,7 @@ permissions:
 
 jobs:
   symfony-tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
     # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
