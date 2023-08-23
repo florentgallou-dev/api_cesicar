@@ -186,7 +186,7 @@ class Travel
 
     public function getAddress(): ?array
     {
-        $address[] = $this->address;
+        // $address[] = $this->address;
         return $this->address;
     }
     public function setAddress(array $address): self
