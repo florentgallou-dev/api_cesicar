@@ -13,12 +13,12 @@ It also provides a great help il focusin on api helpers and understanding of dat
 <details>
   <summary>DOCKER - INSTALLATION</summary>
 
-  ## 1/ Clone project
+  ## 1/ Clone project localy
   ```bash
     git clone repositoryName
   ```
 
-  ## 2/ Create .env
+  ## 2/ In project folder, create a new .env.local file and paste connexion parameters to container docker database
   ```bash
   Create file .env.local in your root folder
   ```
@@ -29,48 +29,27 @@ It also provides a great help il focusin on api helpers and understanding of dat
 
   ## 3/ build docker
   ```bash
-    cd .docker
-  ```
-  ```bash
-    docker-compose build www
-  ```
-  ```bash
-    docker-compose up -d
-  ```
-  ```bash
-    bin/install
+    docker compose up --build
   ```
 
-  ## 4/ up the project 
+  ## 4/ Connect to web container and lauch script install to :
+  - composer install
+  - npm install
+  - start npm
+  - lauch migrations
+  - lauch seeder
+  - generate jwt key
+
   ```bash
-  docker-compose up -d
+    docker exec -it identifiantContainer bash
+    ./install
   ```
+  ## All system should work 🎉
 
   ## link of the projet locally
   - projet - http://localhost:8000/
   - phpmyadmin - http://localhost:8080/
 
-
-  ## 5/ Generate JWT keys
-  ```bash
-  docker-compose exec php bin/console lexik:jwt:generate-keypair
-  ```
-
-  ## Optional/ Create first admin user
-  in database, add first row in user :
-  - first_name
-  - last_name
-  - gender -> homme or femme or autre
-  - email -> for login
-  - password -> hashed with delow php command
-  - roles -> ["ROLE_ADMIN"]
-  - driver -> 0 or 1
-  - is_verified -> 0 or 1
-  - created_at and updated_at -> set now value
-  ## Optional/Hash your first password
-  ```bash
-  php bin/console security:hash-password
-  ```
 </details>
 
 <details>
@@ -109,7 +88,7 @@ It also provides a great help il focusin on api helpers and understanding of dat
 
   ### 2/ Create .env
   ```bash
-  Create file .env.local in your root folder
+  Create file .env.local in your project root folder
   ```
   Add this line with your DB parametes :
   ```bash

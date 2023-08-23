@@ -9,6 +9,7 @@ use App\Entity\Conversation;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\OpenApi\Model;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Controller\MeController;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,7 +19,6 @@ use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
-use ApiPlatform\Serializer\Filter\PropertyFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -54,6 +54,17 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
                                             security: [['bearerAuth' => []]] //for JWT token
                                         )
         ),
+        new Delete(
+            description: 'Delete a user account and all he has by cascade',
+            uriTemplate: '/me/{id}',
+            controller: MeController::class,
+            routeName: 'delete_user',
+            security: 'object.email == user.email',
+            openapi: new Model\Operation(
+                                            summary: 'Supprimer un utilisateur',
+                                            security: [['bearerAuth' => []]]
+                                        )
+        )
     ],
     order: ['id' => 'ASC'],
     paginationEnabled: false,
@@ -97,7 +108,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank(message: "Votre email est indispensable pour vous identifier.")]
     #[Groups(['read:User'])]
-    private ?string $email;
+    //EMAIL has to be public for api security check to work
+    public ?string $email;
     
     /**
      * @var string The hashed password
@@ -199,7 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->first_name.'.'.strtoupper(substr($this->last_name, 0,1));
     }
     
-    #[Groups(['read:travels', 'read:travel', 'read:consersations'])]
+    #[Groups(['read:travels', 'read:travel', 'read:consersations', 'read:consersation'])]
     public function getName(): ?string
     {
         return $this->first_name.' '.$this->last_name;

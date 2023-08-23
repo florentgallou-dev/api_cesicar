@@ -38,7 +38,3 @@ RUN docker-php-ext-configure \
 COPY . /var/www/
 WORKDIR /var/www/
 
-RUN composer install
-RUN npm install
-RUN npm run build
-

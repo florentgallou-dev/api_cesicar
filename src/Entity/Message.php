@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use App\Entity\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\MessageRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -22,12 +23,15 @@ class Message
     private ?int $id;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['read:consersation'])]
     private ?string $message;
     
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    private ?User $user = null;
+    #[Groups(['read:consersation'])]
+    //USER has to be public for api security check to work
+    public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]

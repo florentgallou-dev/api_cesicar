@@ -30,8 +30,9 @@ services:
         ports:
             - 8000:80
         volumes:
+            - ./.docker/services/www/vhosts:/etc/apache2/sites-enabled
+            - ./.docker/services/www/install:/var/www/install
             - .:/var/www
-        command: php bin/console lexik:jwt:generate-keypair && php bin/console doctrine:database:create && php bin/console doctrine:s:u --force && php bin/console doctrine:fixtures:load -yes
 
 volumes:
     db-data:

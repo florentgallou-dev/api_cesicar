@@ -16,12 +16,15 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\ConversationRepository;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bundle\SecurityBundle\Security;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -31,39 +34,54 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(
             description: 'Retrieves the collection of conversations',
             uriTemplate: '/consersations',
-            normalizationContext: ['groups' => 'read:consersations']
+            normalizationContext: ['groups' => 'read:consersations'],
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Récupérer les conversations filtrables',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
         new Get(
             description: 'Retrieves one consersation',
             uriTemplate: '/consersation/{id}',
-            normalizationContext: ['groups' => 'read:consersation'],
+            normalizationContext: ['groups' => ['read:consersations', 'read:consersation']],
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Récupérer une conversation et ses messages',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
         new Post(
             description: 'Creates a new consersation',
             uriTemplate: '/consersation',
             denormalizationContext: ['groups' => 'create:consersation'],
             security: 'is_granted("ROLE_USER")',
-            openapi: new Model\Operation(
-                                            summary: 'Créer un nouveau voyage',
-                                            security: [['bearerAuth' => []]]
-                                        )
-        ),
-        new Patch(
-            description: 'Update an existing consersation',
-            uriTemplate: '/consersation/{id}',
-            denormalizationContext: ['groups' => 'update:consersation'],
-            security: 'is_granted("ROLE_USER")',
-            openapi: new Model\Operation(
-                                            summary: 'Mettre à jour un voyage',
-                                            security: [['bearerAuth' => []]]
-                                        )
+            // openapi: new Model\Operation(
+            //                                 summary: 'Créer une nouvelle conversation',
+            //                                 security: [['bearerAuth' => []]],
+            //                                 requestBody: new Model\RequestBody(
+            //                                     content: new \ArrayObject([
+            //                                         'application/json' => [
+            //                                             'schema' => [
+            //                                                 'type' => 'object', 
+            //                                                 'properties' => [
+            //                                                     'subject' => ['type' => 'string']
+            //                                                 ]
+            //                                             ], 
+            //                                             'example' => [
+            //                                                 'subject' => 'Ma conversation'
+            //                                             ]
+            //                                         ]
+            //                                     ])
+            //                                 )
+            //                             )
         ),
         new Delete(
-            description: 'Delete a consersation and cascade delete all it\s voyagers subscriptions',
+            description: 'Delete a consersation and cascade delete all it\s messages',
             uriTemplate: '/consersation/{id}',
-            security: 'is_granted("ROLE_USER")',
+            security: 'object.user == user',
             openapi: new Model\Operation(
-                                            summary: 'Supprimer un voyage',
+                                            summary: 'Supprimer une conversation',
                                             security: [['bearerAuth' => []]]
                                         )
         ),
@@ -89,14 +107,15 @@ class Conversation
     private ?int $id;
 
     #[ORM\Column(length: 150)]
-    #[Groups(['read:consersations'])]
+    #[Groups(['read:consersations', 'create:consersation'])]
     private ?string $subject;
 
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'conversations')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     #[Groups(['read:consersations'])]
-    private ?User $user = null;
+    //USER has to be public for api security check to work
+    public ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class)]
     #[Groups(['read:consersation'])]

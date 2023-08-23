@@ -62,7 +62,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(
             description: 'Delete a travel and cascade delete all it\s voyagers subscriptions',
             uriTemplate: '/travel/{id}',
-            security: 'is_granted("ROLE_USER")',
+            security: 'object.user == user',
             openapi: new Model\Operation(
                                             summary: 'Supprimer un voyage',
                                             security: [['bearerAuth' => []]]
@@ -132,7 +132,8 @@ class Travel
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     #[Groups(['read:travels', 'read:travel'])]
-    private ?User $user = null;
+    //USER has to be public for api security check to work
+    public ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
     #[JoinTable(name: 'travels_voyagers')]
