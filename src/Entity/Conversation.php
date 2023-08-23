@@ -56,25 +56,25 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
             uriTemplate: '/consersation',
             denormalizationContext: ['groups' => 'create:consersation'],
             security: 'is_granted("ROLE_USER")',
-            // openapi: new Model\Operation(
-            //                                 summary: 'Créer une nouvelle conversation',
-            //                                 security: [['bearerAuth' => []]],
-            //                                 requestBody: new Model\RequestBody(
-            //                                     content: new \ArrayObject([
-            //                                         'application/json' => [
-            //                                             'schema' => [
-            //                                                 'type' => 'object', 
-            //                                                 'properties' => [
-            //                                                     'subject' => ['type' => 'string']
-            //                                                 ]
-            //                                             ], 
-            //                                             'example' => [
-            //                                                 'subject' => 'Ma conversation'
-            //                                             ]
-            //                                         ]
-            //                                     ])
-            //                                 )
-            //                             )
+            openapi: new Model\Operation(
+                                            summary: 'Créer une nouvelle conversation',
+                                            security: [['bearerAuth' => []]],
+                                            requestBody: new Model\RequestBody(
+                                                content: new \ArrayObject([
+                                                    'application/json' => [
+                                                        'schema' => [
+                                                            'type' => 'object', 
+                                                            'properties' => [
+                                                                'subject' => ['type' => 'string']
+                                                            ]
+                                                        ], 
+                                                        'example' => [
+                                                            'subject' => 'Ma conversation'
+                                                        ]
+                                                    ]
+                                                ])
+                                            )
+                                        )
         ),
         new Delete(
             description: 'Delete a consersation and cascade delete all it\s messages',
@@ -103,17 +103,17 @@ class Conversation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:consersations'])]
+    #[Groups(['read:consersations', 'read:message'])]
     private ?int $id;
 
     #[ORM\Column(length: 150)]
-    #[Groups(['read:consersations', 'create:consersation'])]
+    #[Groups(['read:consersations', 'create:consersation', 'read:message'])]
     private ?string $subject;
 
 //Relationships
     #[ORM\ManyToOne(inversedBy: 'conversations')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
-    #[Groups(['read:consersations'])]
+    #[Groups(['read:consersations', 'read:message'])]
     //USER has to be public for api security check to work
     public ?User $user = null;
 

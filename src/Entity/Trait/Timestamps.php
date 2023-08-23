@@ -10,7 +10,7 @@ trait Timestamps
     private ?\DateTime $created_at;
 
     #[ORM\Column]
-    #[Groups(['read:consersation', 'read:travels'])]
+    #[Groups(['read:travels', 'read:consersations', 'read:consersation', 'read:message'])]
     private ?\DateTime $updated_at;
 
     public function setCreatedAt()

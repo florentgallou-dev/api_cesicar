@@ -211,7 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->first_name.'.'.strtoupper(substr($this->last_name, 0,1));
     }
     
-    #[Groups(['read:travels', 'read:travel', 'read:consersations', 'read:consersation'])]
+    #[Groups(['read:travels', 'read:travel', 'read:consersations', 'read:consersation', 'read:message'])]
     public function getName(): ?string
     {
         return $this->first_name.' '.$this->last_name;

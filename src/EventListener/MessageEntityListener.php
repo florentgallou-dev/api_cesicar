@@ -8,7 +8,7 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 
-#[AsEntityListener(event: Events::prePersist, entity: Report::class)]
+#[AsEntityListener(event: Events::prePersist, entity: Message::class)]
 class MessageEntityListener {
 
     public function __construct(private Security $security)
