@@ -25,14 +25,14 @@ services:
             PMA_HOST: db
 
     www:
-        build: .docker/services/www
+        build: .
         container_name: www_cesicar
         ports:
             - 8000:80
         volumes:
             - ./.docker/services/www/vhosts:/etc/apache2/sites-enabled
-            - ./:/var/www
-            - ./.docker/services/www/install:/install
+            - ./.docker/services/www/install:/var/www/install
+            - .:/var/www
 
 volumes:
     db-data:

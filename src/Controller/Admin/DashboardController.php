@@ -35,7 +35,7 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToUrl('Visiter le site', 'fas fa-home', '/');
+        yield MenuItem::linkToUrl('Visiter le site', 'fas fa-home', 'http://127.0.0.1:3000/');
         yield MenuItem::linkToUrl('Voir API', 'fas fa-spider', '/api')
                         ->setPermission('ROLE_ADMIN');
 

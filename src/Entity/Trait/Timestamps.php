@@ -2,6 +2,7 @@
 
 namespace App\Entity\Trait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait Timestamps
 {
@@ -9,6 +10,7 @@ trait Timestamps
     private ?\DateTime $created_at;
 
     #[ORM\Column]
+    #[Groups(['read:consersation', 'read:travels'])]
     private ?\DateTime $updated_at;
 
     public function setCreatedAt()

@@ -23,8 +23,8 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen  \
 RUN curl -sS https://getcomposer.org/installer | php -- \
   &&  mv composer.phar /usr/local/bin/composer
 
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash \
-  && apt-get install nodejs
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
+apt-get install -y nodejs
 
 RUN curl -sS https://get.symfony.com/cli/installer | bash \
   &&  mv /root/.symfony5/bin/symfony /usr/local/bin
@@ -35,4 +35,6 @@ RUN docker-php-ext-configure \
   pdo pdo_mysql opcache intl zip calendar dom mbstring gd xsl \
   &&  pecl install apcu && docker-php-ext-enable apcu
 
+COPY . /var/www/
 WORKDIR /var/www/
+
