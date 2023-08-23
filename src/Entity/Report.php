@@ -23,7 +23,26 @@ use ApiPlatform\Metadata\GetCollection;
             security: 'is_granted("ROLE_USER")',
             openapi: new Model\Operation(
                                             summary: 'Créer un nouveau rapport',
-                                            security: [['bearerAuth' => []]]
+                                            security: [['bearerAuth' => []]],
+                                            requestBody: new Model\RequestBody(
+                                                content: new \ArrayObject([
+                                                    'application/json' => [
+                                                        'schema' => [
+                                                            'type' => 'object', 
+                                                            'properties' => [
+                                                                'message' => ['type' => 'string'],
+                                                                'idReportable' => ['type' => 'integer'],
+                                                                'typeReportable' => ['type' => 'string']
+                                                            ]
+                                                        ], 
+                                                        'example' => [
+                                                            'message' => 'Mon rapport',
+                                                            'idReportable' => 1,
+                                                            'typeReportable' => 'App\/Entity\/Travel::class'
+                                                        ]
+                                                    ]
+                                                ])
+                                            )
                                         )
         )
     ],
