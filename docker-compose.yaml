@@ -32,7 +32,13 @@ services:
         volumes:
             - ./.docker/services/www/vhosts:/etc/apache2/sites-enabled
             - ./.docker/services/www/install:/var/www/install
+            - ./.env.local:/var/www/.env.local
+            - ./.env.test.local:/var/www/.env.test.local
             - .:/var/www
+        env_file: 
+            - .env.local
+            - .env.test.local
+        # command: bash -c "npm install && npm run build && composer install && php bin/console doctrine:schema:update --force && php bin/console doctrine:fixtures:load && php bin/console lexik:jwt:generate-keypair && php bin/phpunit tests/Form/UserTypeTest.php"
 
 volumes:
     db-data:
