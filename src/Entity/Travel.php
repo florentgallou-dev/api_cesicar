@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\User;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use App\Entity\Trait\Timestamps;
@@ -18,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -35,22 +37,36 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             description: 'Retrieves one Travel',
             uriTemplate: '/travel/{id}',
-            normalizationContext: ['groups' => 'read:travel']
+            normalizationContext: ['groups' => 'read:travel'],
         ),
         new Post(
             description: 'Creates a new travel',
             uriTemplate: '/travel',
-            normalizationContext: ['groups' => 'create:travel']
+            denormalizationContext: ['groups' => 'create:travel'],
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Créer un nouveau voyage',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
         new Patch(
             description: 'Update an existing Travel',
             uriTemplate: '/travel/{id}',
-            normalizationContext: ['groups' => 'update:travel']
+            denormalizationContext: ['groups' => 'update:travel'],
+            security: 'is_granted("ROLE_USER")',
+            openapi: new Model\Operation(
+                                            summary: 'Mettre à jour un voyage',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
         new Delete(
             description: 'Delete a travel and cascade delete all it\s voyagers subscriptions',
             uriTemplate: '/travel/{id}',
-            normalizationContext: ['groups' => 'delete:travel']
+            security: 'object.user == user',
+            openapi: new Model\Operation(
+                                            summary: 'Supprimer un voyage',
+                                            security: [['bearerAuth' => []]]
+                                        )
         ),
     ],
     order: ['id' => 'ASC'],
@@ -58,7 +74,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     description: 'Resources des trajets proposés par nos conducteurs'
 ),
 ApiFilter(TermFilter::class, properties: ['toCesi, isPublic']),
-ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER)]
+ApiFilter(DateFilter::class, strategy: DateFilter::PARAMETER_AFTER),
+ApiFilter(SearchFilter::class, properties: ['address' => 'partial'])]
 class Travel
 {
     use Timestamps;
@@ -66,11 +83,11 @@ class Travel
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:travels', 'read:travel'])]
+    #[Groups(['read:travels', 'read:travel', 'read:User'])]
     private ?int $id;
 
     #[ORM\Column(length: 250)]
-    #[Groups(['create:travel', 'read:travel', 'update:travel'])]
+    #[Groups(['create:travel', 'read:travel', 'update:travel', 'read:User'])]
     private ?string $name;
 
     /**
@@ -115,7 +132,8 @@ class Travel
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false, onDelete:"cascade")]
     #[Groups(['read:travels', 'read:travel'])]
-    private ?User $user = null;
+    //USER has to be public for api security check to work
+    public ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'inscriptions')]
     #[JoinTable(name: 'travels_voyagers')]
@@ -168,7 +186,7 @@ class Travel
 
     public function getAddress(): ?array
     {
-        $address[] = $this->address;
+        // $address[] = $this->address;
         return $this->address;
     }
     public function setAddress(array $address): self

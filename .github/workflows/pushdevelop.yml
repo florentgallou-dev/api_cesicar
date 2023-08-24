@@ -1,0 +1,26 @@
+
+
+
+name: Build & Tests on push develop
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and test
+        run: |
+          docker-compose -f docker-compose.yaml up --build
+          docker run npm install && npm run build && composer install && php bin/console doctrine:s:u --force && php bin/phpunit tests/Form/UserTypeTest.php
+          

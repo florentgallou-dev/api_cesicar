@@ -65,8 +65,10 @@ class UserCrudController extends AbstractCrudController
                     'Homme' => 'homme',
                     'Autre' => 'autre',
                 ]);
-        yield ArrayField::new('position', 'Position')
-                ->onlyOnForms();
+                
+        //TODO : Find a way to create a custom field fetching geoapi like in front
+        // yield ArrayField::new('position', 'Position')
+        //         ->onlyOnForms();
 
         yield FormField::addPanel('Sécurité');
         yield EmailField::new('email', 'Email');

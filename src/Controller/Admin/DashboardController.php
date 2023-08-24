@@ -18,7 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin/', name: 'admin')]
     public function index(): Response
     {
         $routeBuilder = $this->container->get(AdminUrlGenerator::class);
@@ -35,7 +35,7 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToUrl('Visiter le site', 'fas fa-home', '/');
+        yield MenuItem::linkToUrl('Visiter le site', 'fas fa-home', 'http://127.0.0.1:3000/');
         yield MenuItem::linkToUrl('Voir API', 'fas fa-spider', '/api')
                         ->setPermission('ROLE_ADMIN');
 

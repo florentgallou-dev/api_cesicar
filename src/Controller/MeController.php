@@ -11,22 +11,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 #[AsController]
 class MeController
 {
     public function __construct(private Security $security)
-    {
-        
-    }
+    {}
 
-    public function __invoke()
+    public function __invoke(): ?User
     {
-        if(!$user = $this->security->getUser()){
-            throw new UnauthorizedHttpException('OAuth', 'Erreur d\'authentification');
-        }
-        return $user;
+        return $this->security->getUser();
     }
 
     #[Route('/api/me', name: 'patch_user', methods: ['PATCH'])]

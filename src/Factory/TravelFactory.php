@@ -96,7 +96,7 @@ final class TravelFactory extends ModelFactory
         return [
             'name' => $faker->text(50),
             'toCesi' => $faker->boolean(),
-            'address' => $address,
+            'address' => (array)$address,
             'departure_date' => $faker->dateTimeBetween('now', '+90 days'),
             'number_seats' => $faker->randomElement($array = [1, 2, 3, 4, 5, 6]),
             'user' => $faker->randomElement($drivers),

@@ -23,8 +23,8 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen  \
 RUN curl -sS https://getcomposer.org/installer | php -- \
   &&  mv composer.phar /usr/local/bin/composer
 
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash \
-  && apt-get install nodejs
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
+apt-get install -y nodejs
 
 RUN curl -sS https://get.symfony.com/cli/installer | bash \
   &&  mv /root/.symfony5/bin/symfony /usr/local/bin
@@ -35,4 +35,8 @@ RUN docker-php-ext-configure \
   pdo pdo_mysql opcache intl zip calendar dom mbstring gd xsl \
   &&  pecl install apcu && docker-php-ext-enable apcu
 
+RUN echo 'DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.local
+RUN echo 'DATABASE_URL="mysql://root:root@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.test.local
+
+COPY . /var/www/
 WORKDIR /var/www/
