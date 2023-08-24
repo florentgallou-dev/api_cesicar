@@ -11,18 +11,12 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - uses: isbang/compose-action@v1.5.1
-        with:
-          compose-file: "docker-compose.yml"
-          compose-flags: build
-          services: |
-            db
-            www
-        env:
-          DATABASE_URL: "mysql://root:root@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"
+      
+      - name: Build docker container
+        run: docker compose up --build
 
-      # - name: Testing with PHPUnit
-        # run: php bin/phpunit tests/ApiTest.php
+      - name: Testing with PHPUnit
+        run: php bin/phpunit tests/ApiTest.php
 
 
  
