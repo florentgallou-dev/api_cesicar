@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          path: /home/runner/./
+          path: /home/ubuntu/actions-runner/run.sh/api_cesicar/api_cesicar ./
       - uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yml"
