@@ -11,26 +11,20 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: |
-            /home/runner/.cache/
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      # - uses: actions/cache@v3
+        # with:
+          # path: |
+            # /home/runner/.cache/
+          # key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       # - name: Set up Docker Buildx
         # uses: docker/setup-buildx-action@v2
 
-      - uses: 'docker'
-      - name: Build docker
-        run: docker compose up --build
-      # - name: Setup PHP, extensions and composer with shivammathur/setup-php
-        # uses: shivammathur/setup-php@verbose
-        # with:
-          # php-version: '8.1'
-          # extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
-# 
-      # - name: Install Composer dependencies
-        # run: composer install
+      - uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.yml"
+        env:
+          DATABASE_URL: "mysql://root:root@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"
 
       - name: Testing with PHPUnit
         run: php bin/phpunit tests/ApiTest.php
