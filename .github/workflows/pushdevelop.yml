@@ -15,6 +15,9 @@ jobs:
       - name: Create env.local
         run: echo 'DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.local
 
+      - name: Create env.local.test
+        run: echo 'DATABASE_URL="mysql://root:root@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.test.local
+
       - name: Build docker container
         run: docker-compose up build
 
