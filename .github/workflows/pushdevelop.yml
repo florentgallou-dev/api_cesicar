@@ -11,7 +11,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      
+
+      - name: Create env.local
+        run: echo 'DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.local
+
       - name: Build docker container
         run: docker-compose up build
 
