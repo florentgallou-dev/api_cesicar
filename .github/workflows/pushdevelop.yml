@@ -21,6 +21,6 @@ jobs:
 
       - name: Build and test
         run: |
-          docker-compose -f docker-compose.yaml up --build
+          docker compose up --build
           docker run npm install && npm run build && composer install && php bin/console doctrine:s:u --force && php bin/phpunit tests/Form/UserTypeTest.php
           
