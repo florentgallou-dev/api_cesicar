@@ -4,7 +4,7 @@ run-name: ${{ github.actor }} is building - testing - deploying
 on:
   push:
     branches:
-      - develop
+      - recette
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
         run: docker compose up -d --build
 
       - name: Install libraries, migrations
-        run: composer install && php bin/console doctrine:s:u --force && php bin/console lexik:jwt:generate-keypair
+        run: composer install && php bin/console doctrine:s:u --complete && php bin/console lexik:jwt:generate-keypair
 
       - name: Testing with PHPUnit
         run: php bin/phpunit tests/ApiTest.php
