@@ -38,6 +38,7 @@ services:
         env_file: 
             - .env.local
             - .env.test.local
+        command: composer install
 
 volumes:
     db-data:

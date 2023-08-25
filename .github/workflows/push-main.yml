@@ -1,0 +1,19 @@
+name: Api Tests - push main
+run-name: ${{ github.actor }} is updates production app.
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Update libraries, migrations
+        run: npm install && composer install && php bin/console doctrine:s:u --complete
+
+
+ 
