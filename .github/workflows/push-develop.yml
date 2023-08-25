@@ -1,0 +1,31 @@
+name: Api Tests - push develop
+run-name: ${{ github.actor }} is building - testing - deploying
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create env.local
+        run: echo 'DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.local
+
+      - name: Create env.local.test
+        run: echo 'DATABASE_URL="mysql://root:root@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.test.local
+
+      - name: Build docker container
+        run: docker compose up --build
+
+      - name: Install libraries, migrations
+        run: composer install && php bin/console doctrine:s:u --force && php bin/console lexik:jwt:generate-keypair
+
+      - name: Testing with PHPUnit
+        run: php bin/phpunit tests/ApiTest.php
+
+
+ 

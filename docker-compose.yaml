@@ -35,9 +35,9 @@ services:
             - ./.env.local:/var/www/.env.local
             - ./.env.test.local:/var/www/.env.test.local
             - .:/var/www
-        env_file: 
-            - .env.local
-            - .env.test.local
+        # env_file: 
+        #     - .env.local
+        #     - .env.test.local
 
 volumes:
     db-data:
