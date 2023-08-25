@@ -22,7 +22,7 @@ jobs:
         run: docker compose up -d --build
 
       - name: Install libraries, migrations
-        run: docker compose exec php composer install && docker compose exec php bin/console doctrine:database:create && docker compose exec php bin/console lexik:jwt:generate-keypair
+        run: docker compose exec composer install && docker compose exec php bin/console doctrine:database:create && docker compose exec php bin/console lexik:jwt:generate-keypair
 
       - name: Testing with PHPUnit
         run: php bin/phpunit tests/ApiTest.php
