@@ -35,8 +35,5 @@ RUN docker-php-ext-configure \
   pdo pdo_mysql opcache intl zip calendar dom mbstring gd xsl \
   &&  pecl install apcu && docker-php-ext-enable apcu
 
-RUN echo 'DATABASE_URL="mysql://api_cesicar:api_cesicar@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.local
-RUN echo 'DATABASE_URL="mysql://root:root@db:3306/api_cesicar?serverVersion=mariadb-10.6.7"' > .env.test.local
-
 COPY . /var/www/
 WORKDIR /var/www/
